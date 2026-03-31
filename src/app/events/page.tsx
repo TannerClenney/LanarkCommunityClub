@@ -51,10 +51,7 @@ export default async function EventsPage() {
         ) : (
           <div className="space-y-4">
             {upcoming.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
-              >
+              <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
@@ -85,19 +82,12 @@ export default async function EventsPage() {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Recent Past Events</h2>
           <div className="space-y-3">
             {past.map((event) => (
-              <div
-                key={event.id}
-                className="bg-gray-50 border border-gray-100 rounded-lg p-4 flex justify-between items-start"
-              >
+              <div key={event.id} className="bg-gray-50 border border-gray-100 rounded-lg p-4 flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-gray-700">{event.title}</h3>
-                  {event.location && (
-                    <p className="text-xs text-gray-400">📍 {event.location}</p>
-                  )}
+                  {event.location && <p className="text-xs text-gray-400">📍 {event.location}</p>}
                 </div>
-                <p className="text-sm text-gray-400 shrink-0">
-                  {formatDateTime(event.startDate)}
-                </p>
+                <p className="text-sm text-gray-400 shrink-0">{formatDateTime(event.startDate)}</p>
               </div>
             ))}
           </div>
