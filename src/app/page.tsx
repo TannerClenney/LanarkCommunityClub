@@ -9,7 +9,7 @@ import {
 } from "@/lib/mock-data";
 
 async function getHomeData() {
-  if (!hasDatabase) {
+  if (!hasDatabase()) {
     return {
       upcomingEvents: mockUpcomingEvents,
       featuredProjects: mockFeaturedProjects,
