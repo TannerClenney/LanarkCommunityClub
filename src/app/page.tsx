@@ -18,12 +18,7 @@ async function getHomeData() {
   }
 
   await connection();
-  const [upcomingEvents, featuredProjects, highlights] = await Promise.all([
-    db.event.findMany({
-      where: { archived: false, isPublic: true, startDate: { gte: new Date() } },
-      orderBy: { startDate: "asc" },
-      take: 3,
-    }),
+  const [featuredProjects, highlights] = await Promise.all([
     db.project.findMany({
       where: { archived: false, isFeatured: true },
       orderBy: { createdAt: "desc" },
@@ -35,7 +30,11 @@ async function getHomeData() {
       take: 3,
     }),
   ]);
-  return { upcomingEvents, featuredProjects, highlights };
+  return {
+    upcomingEvents: getFeaturedEvents(mockEvents),
+    featuredProjects,
+    highlights,
+  };
 }
 
 export default async function HomePage() {
@@ -103,12 +102,7 @@ export default async function HomePage() {
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
                   <p className="text-xs text-green-600 font-semibold uppercase mb-1">
-                    {"dateLabel" in event
-                      ? event.dateLabel
-                      : new Intl.DateTimeFormat("en-US", {
-                          month: "long",
-                          day: "numeric",
-                        }).format(event.startDate)}
+                    {event.dateLabel}
                   </p>
                   <h3 className="font-bold text-gray-900 mb-2">{event.title}</h3>
                   <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>
