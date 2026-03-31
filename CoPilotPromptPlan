@@ -1,0 +1,604 @@
+Lanark Community Club Website
+Three-Prompt Copilot Plan for a Right-Sized Build
+This document is a three-prompt build plan for using GitHub Copilot to stand up `lanarkcommunityclub.com` in a way that is practical, maintainable, secure, and appropriately scaled for a community club.
+The framing assumes we are acting like a small internal Agile team doing a weekly community-involvement SWARM event: focused, collaborative, iterative, and disciplined enough to avoid overbuilding.
+The goal is not to create the biggest possible platform. The goal is to create a durable community website with a modest member area that serves the Lanark Community Club well for years.
+---
+1. Product Framing
+Product Vision
+Create a trustworthy, welcoming, easy-to-maintain website for the Lanark Community Club (LCC) that supports:
+public awareness
+event visibility
+donations
+storytelling about local impact
+scholarships and club history
+a lightweight, private members area for internal coordination
+Product Principles
+Use these principles to guide every technical decision:
+Do not overbuild
+Prefer boring, proven technology
+Make solo maintenance realistic
+Keep public content easy to update
+Keep member features intentionally constrained
+Optimize for clarity over cleverness
+Ship an MVP that the club can actually use
+Use security best practices without enterprise theater
+Design for mobile use and low-friction admin workflows
+Let the technology serve the club, not the other way around
+---
+2. Working Model: Weekly Community SWARM
+Treat the project like a small Agile team with a weekly SWARM cadence.
+Team Roles We Are Simulating
+Even if one or two people hold most of the work, these lenses matter:
+Club President / Product Owner
+Owns:
+vision
+priorities
+what matters most to the club
+approval of scope
+deciding what can wait
+Technical Lead / Full-Stack Developer
+Owns:
+architecture
+implementation order
+code quality
+maintainability
+security baseline
+deployment model
+Content / Community Lead
+Owns:
+history
+photos
+scholarship details
+event descriptions
+tone of the site
+public trust
+Operations / Membership Lead
+Owns:
+officer workflows
+member approvals
+calendars
+announcement flow
+light forum moderation
+Weekly SWARM Pattern
+Use this pattern as the mental model behind the prompts:
+Weekly Loop
+Review current priorities
+Build the smallest useful slice
+Test it manually
+Tighten rough edges
+Confirm maintainability
+Move to the next slice
+This three-prompt plan is designed to align with that rhythm:
+Prompt 1 = Architecture + constraints + MVP definition
+Prompt 2 = Scaffold + core domain implementation
+Prompt 3 = Polish + admin usability + production readiness
+---
+3. Recommended Product Scope
+Public-Facing Website
+The public-facing site should include:
+Home
+About / History
+Public Events Calendar
+Projects / Community Impact
+Scholarships
+Donate
+Contact
+Social links
+Photo gallery / archive
+Public content areas should clearly support:
+upcoming events
+local identity and belonging
+credibility
+donation trust
+record of impact
+Known important stories/examples:
+public park restroom project
+Gagaball pit
+awarded scholarships
+event calendar
+photographs of community efforts
+Members Area
+The members area should stay intentionally lightweight and focused on practical operations:
+member-only calendar
+announcements / bulletin board
+simple discussion forum / thread-based message board
+profile/account basics
+role-aware access control
+officer/admin moderation tools
+Explicit Non-Goals for MVP
+Do not build these in the first release unless there is a compelling need:
+real-time chat
+custom mobile app
+complex workflow automation
+advanced analytics dashboard
+heavy CMS integration
+overcomplicated roles and permissions
+event ticketing platform
+custom donation ledger system
+granular audit engine
+social network features
+---
+4. Recommended Technical Direction
+Right-Sized Stack
+Use a modern but boring stack:
+Next.js with App Router
+TypeScript
+PostgreSQL
+Prisma ORM
+NextAuth / Auth.js or similarly practical auth solution
+Tailwind CSS
+Stripe for donations
+Resend or similarly simple email provider for contact and auth flows
+Vercel-friendly deployment
+Why This Stack
+This combination is:
+popular
+well-supported
+readable
+fast to scaffold
+realistic for a solo maintainer
+secure enough when implemented responsibly
+flexible without becoming a burden
+Admin / Content Management Direction
+Default to a simple protected admin area inside the app instead of introducing a full CMS immediately.
+Reason:
+fewer moving parts
+less configuration burden
+easier to understand
+better aligned with a modest content footprint
+Only add a CMS later if the team feels real content bottlenecks.
+---
+5. Prompt Strategy Best Practices
+When using Copilot, do not ask it to “build the whole product” in one shot.
+Use prompts that:
+set firm constraints
+define scope clearly
+establish architecture early
+sequence work in manageable chunks
+ask for implementation in an opinionated order
+require brief tradeoff explanations
+require readable code and filenames
+emphasize security and maintainability
+Each prompt below is written to reduce:
+architectural drift
+accidental complexity
+random dependency choices
+UI chaos
+weak auth assumptions
+bloated feature creep
+---
+6. Three-Prompt Plan
+---
+PROMPT 1 — Architecture, Scope, and Technical Foundation
+Purpose
+Use this first prompt to force Copilot to behave like a disciplined technical lead and product-minded architect.
+The output of Prompt 1 should be:
+the right architecture
+clear MVP boundaries
+folder structure
+route structure
+database schema draft
+auth/role strategy
+admin/content strategy
+implementation order
+When to Use
+Use this before generating much code.
+Prompt 1
+```md
+You are acting as a seasoned lead full-stack developer helping me stand up the first production-ready version of `lanarkcommunityclub.com`.
+
+This is a real website for the **Lanark Community Club (LCC)**, a community organization in Lanark, Illinois. The site must be **simple, durable, easy to host, easy to understand, and easy for a capable solo maintainer to keep running long-term**.
+
+Think like a practical technical lead on a small Agile team doing weekly SWARM development with community stakeholders. Your job is to help define the architecture and MVP so we do not overbuild.
+
+## Core Product Goals
+The website has two purposes:
+
+1. **Public-facing website**
+   - home page
+   - public events calendar
+   - club history
+   - projects/community impact
+   - scholarships
+   - photographs/gallery
+   - donate page
+   - contact page
+   - links to socials
+
+2. **Private members area**
+   - member-only calendar
+   - announcements board
+   - simple forum/message board
+   - profile/account basics
+   - officer/admin moderation and content management
+
+## Important Context
+This is a local community club website, not a startup SaaS platform.
+Optimize for:
+- maintainability
+- clarity
+- security
+- low admin burden
+- mobile-friendliness
+- straightforward future updates
+
+Avoid:
+- overengineering
+- microservices
+- unnecessary abstractions
+- exotic tools
+- complex real-time systems
+- heavy CMS decisions unless strongly justified
+
+## Preferred Stack Direction
+Please use and justify a right-sized stack centered on:
+- Next.js
+- TypeScript
+- PostgreSQL
+- Prisma
+- Tailwind
+- practical authentication
+- Stripe for donations
+- easy deployment on Vercel or equivalent
+
+## Public Content Areas That Matter
+Make sure the architecture supports:
+- upcoming events
+- community history
+- past projects
+- public park restroom project
+- Gagaball pit
+- scholarships
+- contact information
+- photos
+- social links
+- donation calls to action
+
+## What I Want From You
+Please provide all of the following in a clear, practical way:
+
+1. recommended architecture and why
+2. MVP scope
+3. explicit non-goals for MVP
+4. folder structure
+5. route map
+6. initial Prisma schema draft
+7. role model and auth strategy
+8. public vs private content strategy
+9. admin/content management strategy
+10. donation integration recommendation
+11. deployment recommendation
+12. implementation order for the first 6–8 development steps
+
+### Constraints
+- choose the simpler durable path when there is a tradeoff
+- keep the member area intentionally modest
+- explain tradeoffs briefly
+- do not overbuild
+- keep code organization understandable for a solo maintainer
+- default to a protected in-app admin area instead of a full CMS unless there is a compelling reason otherwise
+
+At the end, include a short section titled:
+**“Why this is the right size for LCC right now.”**
+```
+What Good Output Looks Like
+Prompt 1 should leave you with:
+one clear stack
+one clear schema direction
+one clear route plan
+one clear MVP
+no major architecture uncertainty
+Review Checklist for Prompt 1 Output
+Approve Prompt 1 output only if it:
+keeps the architecture boring and clean
+does not invent unnecessary systems
+makes the members area small and safe
+treats donations with a trusted provider
+makes admin tasks realistic
+creates a clean build sequence
+---
+PROMPT 2 — Scaffold the Application and Core Features
+Purpose
+Use this prompt once Prompt 1 has locked the shape of the project.
+The output of Prompt 2 should be:
+scaffolded application structure
+initial code files
+schema and seed data
+auth setup
+public pages
+protected member area skeleton
+admin skeleton
+core reusable components
+When to Use
+Use this after you accept the architecture and MVP.
+Prompt 2
+```md
+Using the approved architecture and MVP plan, generate the first build scaffold for `lanarkcommunityclub.com`.
+
+You are now acting as the implementation lead on our small Agile SWARM team. Build the project in a way that is practical, readable, and maintainable by a capable solo maintainer.
+
+## Requirements
+Please scaffold the application with:
+
+### Core Stack
+- Next.js with TypeScript
+- Tailwind CSS
+- Prisma with PostgreSQL
+- practical auth implementation
+- protected routes for members/admin
+- Stripe-ready donate flow structure
+- basic email/contact submission structure
+
+### Public Pages
+Create starter implementations for:
+- Home
+- About / History
+- Events
+- Projects / Community Impact
+- Scholarships
+- Donate
+- Contact
+- Gallery / Photos
+
+### Members Area
+Create starter implementations for:
+- Member dashboard
+- Member calendar page
+- Announcements board
+- Discussion board / threads
+- Profile / account page
+
+### Admin Area
+Create a lightweight protected admin area for:
+- managing events
+- managing projects
+- managing scholarships
+- managing galleries/photos
+- managing homepage highlights
+- managing announcements
+- basic member approval / role assignment
+
+## Code Generation Expectations
+Please generate:
+
+1. project folder structure
+2. key route files
+3. layout files
+4. auth setup files
+5. Prisma schema
+6. seed script with realistic sample data
+7. reusable UI components
+8. middleware / route protection where appropriate
+9. starter forms and server actions or API routes where appropriate
+10. brief setup instructions
+
+## UX Direction
+Keep the UI:
+- clean
+- warm
+- community-oriented
+- mobile-friendly
+- accessible
+- not flashy
+- not corporate
+- readable for all ages
+
+## Coding Constraints
+- do not create giant abstractions
+- do not prematurely generalize
+- prefer straightforward component composition
+- use clear file names
+- keep comments useful but minimal
+- keep auth and role logic understandable
+- keep forum/message board simple and thread-based
+- do not add real-time chat
+
+## Important Data/Content Context
+Include realistic starter/sample content supporting:
+- upcoming events
+- public park restroom project
+- Gagaball pit
+- scholarships
+- donation messaging
+- photo/gallery placeholders
+- local club tone
+
+## What I Want in the Response
+Please generate the scaffold in sensible implementation order and include code for the key files needed to stand up the MVP skeleton.
+
+At the end, include:
+1. a list of files created
+2. any environment variables required
+3. the top 5 next implementation tasks
+```
+What Good Output Looks Like
+Prompt 2 should produce:
+a coherent scaffold
+meaningful starter pages
+a functioning auth boundary
+a clean data model
+obvious next steps
+Review Checklist for Prompt 2 Output
+Approve Prompt 2 output only if it:
+follows Prompt 1 architecture
+creates understandable files
+keeps admin lightweight
+keeps member features modest
+does not introduce unnecessary packages
+does not let Stripe/auth become hand-wavy
+includes realistic sample content
+---
+PROMPT 3 — Production Hardening, Usability, and MVP Polish
+Purpose
+Use this final prompt to tighten the app into a credible MVP instead of a loose prototype.
+The output of Prompt 3 should be:
+better UX polish
+practical validation and security tightening
+content/admin usability improvements
+accessibility checks
+deployment readiness
+launch checklist
+When to Use
+Use this after Prompt 2 has created the first-pass scaffold.
+Prompt 3
+```md
+We now have the first scaffold for `lanarkcommunityclub.com`. Act as the lead engineer doing MVP hardening and product polish before launch.
+
+This is not a rewrite. This is a disciplined refinement pass for a small community club website. Improve what exists while preserving the intentionally right-sized architecture.
+
+## Goals for This Pass
+Strengthen the app in the following areas:
+
+### 1. Usability
+Improve:
+- homepage clarity
+- navigation
+- event browsing
+- donation clarity
+- contact flow
+- member dashboard usefulness
+- admin flow efficiency
+
+### 2. MVP Production Readiness
+Tighten:
+- form validation
+- auth edge cases
+- route protection
+- role checks
+- loading/error states
+- empty states
+- metadata/basic SEO
+- accessibility basics
+- mobile responsiveness
+- seed/demo content realism
+
+### 3. Security and Safety
+Add practical, right-sized improvements for:
+- server-side authorization checks
+- safe form handling
+- rate limiting where practical
+- environment variable hygiene
+- safe file/image patterns
+- protection against leaking private member data
+- sane admin safeguards
+
+### 4. Admin and Content Workflow
+Make sure officers/admins can realistically:
+- create/edit/archive events
+- manage project highlights
+- manage scholarships
+- manage gallery items
+- update homepage featured content
+- post announcements
+- moderate discussion threads
+- approve members / assign roles
+
+## Constraints
+- do not introduce major new systems
+- do not replace the stack
+- do not add heavy complexity
+- do not add real-time infrastructure
+- keep the member area simple
+- preserve readability for a solo maintainer
+- choose practical improvements over clever refactors
+
+## Deliverables
+Please provide:
+
+1. a prioritized list of MVP hardening improvements
+2. updated code for the most important files
+3. validation strategy
+4. role/authorization tightening strategy
+5. admin workflow improvements
+6. accessibility improvements
+7. deployment and launch checklist
+8. post-launch phase 2 suggestions that are intentionally optional
+
+## Important
+Clearly separate:
+- must-do before launch
+- should-do soon after launch
+- optional future nice-to-haves
+
+At the end, include a short section titled:
+**“What I would ship for LCC this month.”**
+```
+What Good Output Looks Like
+Prompt 3 should produce:
+a shippable mindset
+reduced risk
+better officer usability
+stronger public trust
+a practical launch path
+Review Checklist for Prompt 3 Output
+Approve Prompt 3 output only if it:
+improves, rather than rewrites
+keeps scope under control
+strengthens security and usability
+clearly separates launch-critical from future nice-to-haves
+leaves you with a realistic launch checklist
+---
+7. Suggested Real-World Usage Pattern
+Use the prompts in this order and do not skip ahead:
+Step 1
+Run Prompt 1 and review the architecture carefully.
+Step 2
+Save the approved output into:
+project notes
+README planning notes
+issue/task list
+Step 3
+Run Prompt 2 and use it to scaffold the codebase.
+Step 4
+Implement and test the scaffold in small slices:
+homepage
+events
+donate
+member auth
+announcement board
+admin edits
+Step 5
+Run Prompt 3 once the skeleton is standing and you are ready to harden/polish.
+---
+8. Suggested MVP Acceptance Criteria
+Use this as your internal “good enough to launch” definition.
+Public Site
+visitors can understand what LCC is
+visitors can view upcoming events
+visitors can view club history and impact
+visitors can see scholarships and projects
+visitors can contact the club
+visitors can donate with confidence
+visitors can find social/community links
+Members Area
+approved users can sign in securely
+members can see member-only calendar items
+members can read announcements
+members can participate in simple discussion threads
+officers/admins can manage basic content safely
+Operations
+the president or officer team can update core content without pain
+the site is deployable with documented environment variables
+the codebase feels understandable after stepping away for two weeks
+no obvious overengineering regrets are present
+---
+9. Practical Advice for the LCC President Using Copilot
+As you use these prompts, think like a product owner, not just a builder.
+Ask after each Copilot pass:
+Does this make the club more effective?
+Can I maintain this in real life?
+Will another person understand it later?
+Is this feature actually necessary now?
+Are we building trust or just adding software?
+That mindset will protect the project more than any framework choice.
+---
+10. Final Recommendation
+If the goal is to stand up a perfectly scaled first version of `lanarkcommunityclub.com`, the win is not maximum features.
+The win is:
+a clean public presence
+a safe and modest member area
+simple donation capability
+a manageable admin path
+a codebase that still feels friendly six months later
+That is the right kind of “world class” for this club.
