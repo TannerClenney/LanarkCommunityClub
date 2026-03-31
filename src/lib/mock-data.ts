@@ -6,88 +6,92 @@
 
 const now = new Date();
 
-/**
- * Event interface for both homepage and events page.
- * @property date - Human-readable date string (e.g., "June 26–27, 2026")
- * @property monthDay - [month, day] tuple for chronological sorting across all events
- * @property featuredOnHome - Show this event in the homepage curated preview
- */
-export interface Event {
+export type SiteEvent = {
   id: string;
   title: string;
+  dateLabel: string;
   description: string;
-  date: string;
   location?: string;
   image?: string;
-  monthDay: [number, number]; // [month: 1-12, day: 1-31] for sorting
-  featuredOnHome: boolean;
+  featuredOnHome?: boolean;
+};
+
+const monthOrder: Record<string, number> = {
+  january: 1,
+  february: 2,
+  march: 3,
+  april: 4,
+  may: 5,
+  june: 6,
+  july: 7,
+  august: 8,
+  september: 9,
+  october: 10,
+  november: 11,
+  december: 12,
+};
+
+function getEventSortKey(dateLabel: string): [number, number] {
+  const match = dateLabel.match(/^([A-Za-z]+)\s+(\d{1,2})/);
+  if (!match) {
+    return [99, 99];
+  }
+
+  const [, monthName, dayValue] = match;
+  return [monthOrder[monthName.toLowerCase()] ?? 99, Number(dayValue)];
 }
 
-/**
- * All community events throughout the year.
- * Sorted chronologically for consistent ordering across all pages.
- */
-export const mockEvents: Event[] = [
+export const mockEvents: SiteEvent[] = [
   {
     id: "say-no-to-snow",
-    title: "Say No To Snow 5K Race",
+    title: "Say No To Snow 5K Race to Benefit the Lanark Community of Churches",
+    dateLabel: "February 27",
     description:
-      "A friendly 5K run to benefit the Lanark Community of Churches. Join neighbors and promote fitness and community spirit.",
-    date: "February 27",
+      "A community 5K that supports the Lanark Community of Churches and brings neighbors together in the winter season.",
     location: "Lanark Parks & Recreation",
-    monthDay: [2, 27],
-    featuredOnHome: false,
   },
   {
     id: "old-settlers-days",
     title: "Old Settlers Days Music and Beer Tent",
+    dateLabel: "June 26 & 27",
     description:
-      "Join us for live music, local beer, and community celebrations at the annual Old Settlers Days festival.",
-    date: "June 26–27",
+      "Live music, a welcoming beer tent, and one of Lanark's signature summer community gatherings.",
     location: "Lanark Community Grounds",
     image: "/images/events/old-settlers-poster.jpg",
-    monthDay: [6, 26],
     featuredOnHome: true,
   },
   {
     id: "fall-fest",
     title: "Fall Fest – Cooking and Fun",
+    dateLabel: "October 10",
     description:
-      "Celebrate autumn with cooking demonstrations, food tastings, and family-friendly activities throughout the day.",
-    date: "October 10",
+      "A festive fall gathering centered on good food, cooking, and family-friendly fun.",
     location: "Central Park Pavilion",
-    monthDay: [10, 10],
     featuredOnHome: true,
   },
   {
     id: "haunted-house",
     title: "Citywide Haunted House",
+    dateLabel: "October 31",
     description:
-      "Experience thrills and chills at the annual community haunted house. A classic Halloween tradition for all ages.",
-    date: "October 31",
+      "Lanark's Halloween tradition returns with a citywide haunted house experience for the community.",
     location: "Historic Downtown Building",
-    monthDay: [10, 31],
     featuredOnHome: true,
   },
   {
     id: "youth-basketball",
-    title: "Youth Basketball Camp",
+    title: "Youth Basketball Camp with the Athletic Club",
+    dateLabel: "December 11",
     description:
-      "A fun and instructional camp for community youth, organized in partnership with the Lanark Athletic Club.",
-    date: "December 11",
+      "A youth camp focused on skill-building and teamwork in partnership with the Athletic Club.",
     location: "Lanark High School Gymnasium",
-    monthDay: [12, 11],
-    featuredOnHome: false,
   },
 ];
 
-/**
- * Sort events chronologically by month and day.
- */
-export function sortEventsByMonth(events: Event[]): Event[] {
+export function sortEventsByMonth(events: SiteEvent[]): SiteEvent[] {
   return [...events].sort((a, b) => {
-    const [aMonth, aDay] = a.monthDay;
-    const [bMonth, bDay] = b.monthDay;
+    const [aMonth, aDay] = getEventSortKey(a.dateLabel);
+    const [bMonth, bDay] = getEventSortKey(b.dateLabel);
     if (aMonth !== bMonth) return aMonth - bMonth;
     return aDay - bDay;
   });
@@ -133,15 +137,8 @@ export const mockHighlights = [
  * Get featured events for homepage preview, sorted chronologically.
  * Returns events marked with featuredOnHome: true.
  */
-export function getFeaturedEvents(events: Event[]): Event[] {
-  return events
-    .filter((e) => e.featuredOnHome)
-    .sort((a, b) => {
-      const [aMonth, aDay] = a.monthDay;
-      const [bMonth, bDay] = b.monthDay;
-      if (aMonth !== bMonth) return aMonth - bMonth;
-      return aDay - bDay;
-    });
+export function getFeaturedEvents(events: SiteEvent[]): SiteEvent[] {
+  return sortEventsByMonth(events.filter((event) => event.featuredOnHome));
 }
 
 export const mockFeaturedProjects = [

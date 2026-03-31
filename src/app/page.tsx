@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { db, hasDatabase } from "@/lib/db";
 import {
+  type SiteEvent,
   mockEvents,
   getFeaturedEvents,
   mockFeaturedProjects,
@@ -11,7 +12,6 @@ import {
 async function getHomeData() {
   if (!hasDatabase()) {
     return {
-      upcomingEvents: getFeaturedEvents(mockEvents),
       featuredProjects: mockFeaturedProjects,
       highlights: mockHighlights,
     };
@@ -31,14 +31,14 @@ async function getHomeData() {
     }),
   ]);
   return {
-    upcomingEvents: getFeaturedEvents(mockEvents),
     featuredProjects,
     highlights,
   };
 }
 
 export default async function HomePage() {
-  const { upcomingEvents, featuredProjects, highlights } = await getHomeData();
+  const { featuredProjects, highlights } = await getHomeData();
+  const upcomingEvents: SiteEvent[] = getFeaturedEvents(mockEvents);
 
   return (
     <div>

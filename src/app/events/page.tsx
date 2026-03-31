@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { mockEvents, sortEventsByMonth } from "@/lib/mock-data";
+import { type SiteEvent, mockEvents, sortEventsByMonth } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Community Events",
   description: "Upcoming community events hosted by the Lanark Community Club.",
 };
 
-const events = sortEventsByMonth(mockEvents);
+const events: SiteEvent[] = sortEventsByMonth(mockEvents);
 
 export default function EventsPage() {
   return (
@@ -41,7 +41,7 @@ export default function EventsPage() {
 
               <div className="space-y-2">
                 <p className="text-lg font-semibold text-green-700">
-                  📅 {event.date}
+                  📅 {event.dateLabel}
                 </p>
 
                 {event.location && (
