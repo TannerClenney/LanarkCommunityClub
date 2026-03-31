@@ -1,9 +1,22 @@
 import Link from "next/link";
 import { connection } from "next/server";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { formatDateShort } from "@/lib/utils";
+import {
+  mockUpcomingEvents,
+  mockFeaturedProjects,
+  mockHighlights,
+} from "@/lib/mock-data";
 
 async function getHomeData() {
+  if (!hasDatabase) {
+    return {
+      upcomingEvents: mockUpcomingEvents,
+      featuredProjects: mockFeaturedProjects,
+      highlights: mockHighlights,
+    };
+  }
+
   await connection();
   const [upcomingEvents, featuredProjects, highlights] = await Promise.all([
     db.event.findMany({

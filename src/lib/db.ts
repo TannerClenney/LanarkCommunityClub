@@ -1,6 +1,9 @@
 import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
+/** True when a database connection string is available. */
+export const hasDatabase = !!process.env.DATABASE_URL;
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
