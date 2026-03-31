@@ -103,7 +103,12 @@ export default async function HomePage() {
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
                   <p className="text-xs text-green-600 font-semibold uppercase mb-1">
-                    {event.date}
+                    {"dateLabel" in event
+                      ? event.dateLabel
+                      : new Intl.DateTimeFormat("en-US", {
+                          month: "long",
+                          day: "numeric",
+                        }).format(event.startDate)}
                   </p>
                   <h3 className="font-bold text-gray-900 mb-2">{event.title}</h3>
                   <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>
