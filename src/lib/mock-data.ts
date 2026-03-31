@@ -6,6 +6,86 @@
 
 const now = new Date();
 
+/**
+ * Event interface for both homepage and events page.
+ * @property date - Human-readable date string (e.g., "June 26–27, 2026")
+ * @property monthDay - [month, day] tuple for chronological sorting across all events
+ */
+export interface Event {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  location?: string;
+  image?: string;
+  monthDay: [number, number]; // [month: 1-12, day: 1-31] for sorting
+}
+
+/**
+ * All community events throughout the year.
+ * Sorted chronologically for consistent ordering across all pages.
+ */
+export const mockEvents: Event[] = [
+  {
+    id: "say-no-to-snow",
+    title: "Say No To Snow 5K Race",
+    description:
+      "A friendly 5K race organized by the Lanark Community of Churches to promote fitness and community spirit.",
+    date: "February 27",
+    location: "Lanark Parks & Recreation",
+    monthDay: [2, 27],
+  },
+  {
+    id: "old-settlers-days",
+    title: "Old Settlers Days Music and Beer Tent",
+    description:
+      "Join us for live music, local beer, and community celebrations at the annual Old Settlers Days.",
+    date: "June 26–27",
+    location: "Lanark Community Grounds",
+    image: "/images/events/old-settlers-poster.jpg",
+    monthDay: [6, 26],
+  },
+  {
+    id: "fall-fest",
+    title: "Fall Fest – Cooking and Fun",
+    description:
+      "Celebrate autumn with community cooking demonstrations, food tastings, and family-friendly activities.",
+    date: "October 10",
+    location: "Central Park Pavilion",
+    monthDay: [10, 10],
+  },
+  {
+    id: "haunted-house",
+    title: "Citywide Haunted House",
+    description:
+      "Experience thrills and chills at the annual community haunted house, perfect for all who dare to enter.",
+    date: "October 31",
+    location: "Historic Downtown Building",
+    monthDay: [10, 31],
+  },
+  {
+    id: "youth-basketball",
+    title: "Youth Basketball Camp",
+    description:
+      "A fun and instructional basketball camp for community youth, organized with the Lanark Athletic Club.",
+    date: "December 11",
+    location: "Lanark High School Gymnasium",
+    monthDay: [12, 11],
+  },
+];
+
+/**
+ * Sort events chronologically by month and day.
+ */
+export function sortEventsByMonth(events: Event[]): Event[] {
+  return [...events].sort((a, b) => {
+    const [aMonth, aDay] = a.monthDay;
+    const [bMonth, bDay] = b.monthDay;
+    if (aMonth !== bMonth) return aMonth - bMonth;
+    return aDay - bDay;
+  });
+}
+
 export const mockHighlights = [
   {
     id: "mock-highlight-1",

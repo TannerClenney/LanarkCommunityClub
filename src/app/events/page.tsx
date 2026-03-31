@@ -1,63 +1,12 @@
 import type { Metadata } from "next";
+import { mockEvents, sortEventsByMonth } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Community Events",
   description: "Upcoming community events hosted by the Lanark Community Club.",
 };
 
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  endDate?: string;
-  location?: string;
-  image?: string;
-}
-
-const events: Event[] = [
-  {
-    id: "old-settlers-days",
-    title: "Old Settlers Days Music and Beer Tent",
-    description:
-      "Join us for live music, local beer, and community celebrations at the annual Old Settlers Days.",
-    date: "June 26–27, 2026",
-    location: "Lanark Community Grounds",
-    image: "/images/events/old-settlers-poster.jpg",
-  },
-  {
-    id: "say-no-to-snow",
-    title: "Say No To Snow 5K Race",
-    description:
-      "A friendly 5K race organized by the Lanark Community of Churches to promote fitness and community spirit.",
-    date: "February 27, 2027",
-    location: "Lanark Parks & Recreation",
-  },
-  {
-    id: "fall-fest",
-    title: "Fall Fest – Cooking and Fun",
-    description:
-      "Celebrate autumn with community cooking demonstrations, food tastings, and family-friendly activities.",
-    date: "October 10, 2026",
-    location: "Central Park Pavilion",
-  },
-  {
-    id: "youth-basketball",
-    title: "Youth Basketball Camp",
-    description:
-      "A fun and instructional basketball camp for community youth, organized with the Lanark Athletic Club.",
-    date: "December 11, 2026",
-    location: "Lanark High School Gymnasium",
-  },
-  {
-    id: "haunted-house",
-    title: "Citywide Haunted House",
-    description:
-      "Experience thrills and chills at the annual community haunted house, perfect for all who dare to enter.",
-    date: "October 31, 2026",
-    location: "Historic Downtown Building",
-  },
-];
+const events = sortEventsByMonth(mockEvents);
 
 export default function EventsPage() {
   return (

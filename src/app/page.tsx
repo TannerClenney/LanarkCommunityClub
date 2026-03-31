@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { connection } from "next/server";
 import { db, hasDatabase } from "@/lib/db";
-import { formatDateShort } from "@/lib/utils";
 import {
-  mockUpcomingEvents,
+  mockEvents,
+  sortEventsByMonth,
   mockFeaturedProjects,
   mockHighlights,
 } from "@/lib/mock-data";
 
 async function getHomeData() {
   if (!hasDatabase()) {
+    const sortedEvents = sortEventsByMonth(mockEvents);
     return {
-      upcomingEvents: mockUpcomingEvents,
+      upcomingEvents: sortedEvents.slice(0, 3),
       featuredProjects: mockFeaturedProjects,
       highlights: mockHighlights,
     };
@@ -103,7 +104,7 @@ export default async function HomePage() {
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
                   <p className="text-xs text-green-600 font-semibold uppercase mb-1">
-                    {formatDateShort(event.startDate)}
+                    {event.date}
                   </p>
                   <h3 className="font-bold text-gray-900 mb-2">{event.title}</h3>
                   <p className="text-sm text-gray-600 line-clamp-2">{event.description}</p>
