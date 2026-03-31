@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
+import { mockUpcomingEvents } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Events",
@@ -9,8 +10,16 @@ export const metadata: Metadata = {
 };
 
 async function getEvents() {
+  if (!hasDatabase()) {
+    return {
+      upcoming: mockUpcomingEvents,
+      past: [],
+    };
+  }
+
   await connection();
   const now = new Date();
+
   const [upcoming, past] = await Promise.all([
     db.event.findMany({
       where: { archived: false, isPublic: true, startDate: { gte: now } },
@@ -22,6 +31,7 @@ async function getEvents() {
       take: 6,
     }),
   ]);
+
   return { upcoming, past };
 }
 
@@ -41,16 +51,23 @@ export default async function EventsPage() {
         ) : (
           <div className="space-y-4">
             {upcoming.map((event) => (
-              <div key={event.id} className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+              <div
+                key={event.id}
+                className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
+              >
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
                   <div>
                     <h3 className="text-lg font-bold text-gray-900">{event.title}</h3>
                     <p className="text-sm text-gray-600 mt-1">{event.description}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-sm font-semibold text-green-700">{formatDateTime(event.startDate)}</p>
+                    <p className="text-sm font-semibold text-green-700">
+                      {formatDateTime(event.startDate)}
+                    </p>
                     {event.endDate && (
-                      <p className="text-xs text-gray-400">until {formatDateTime(event.endDate)}</p>
+                      <p className="text-xs text-gray-400">
+                        until {formatDateTime(event.endDate)}
+                      </p>
                     )}
                     {event.location && (
                       <p className="text-xs text-gray-500 mt-1">📍 {event.location}</p>
@@ -68,12 +85,19 @@ export default async function EventsPage() {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Recent Past Events</h2>
           <div className="space-y-3">
             {past.map((event) => (
-              <div key={event.id} className="bg-gray-50 border border-gray-100 rounded-lg p-4 flex justify-between items-start">
+              <div
+                key={event.id}
+                className="bg-gray-50 border border-gray-100 rounded-lg p-4 flex justify-between items-start"
+              >
                 <div>
                   <h3 className="font-semibold text-gray-700">{event.title}</h3>
-                  {event.location && <p className="text-xs text-gray-400">📍 {event.location}</p>}
+                  {event.location && (
+                    <p className="text-xs text-gray-400">📍 {event.location}</p>
+                  )}
                 </div>
-                <p className="text-sm text-gray-400 shrink-0">{formatDateTime(event.startDate)}</p>
+                <p className="text-sm text-gray-400 shrink-0">
+                  {formatDateTime(event.startDate)}
+                </p>
               </div>
             ))}
           </div>
