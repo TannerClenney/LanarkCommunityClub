@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 async function getEvents() {
+  await connection();
   const now = new Date();
   const [upcoming, past] = await Promise.all([
     db.event.findMany({

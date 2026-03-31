@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Member Calendar" };
 
 async function getCalendarEvents() {
+  await connection();
   return db.event.findMany({
     where: { archived: false, startDate: { gte: new Date() } },
     orderBy: { startDate: "asc" },

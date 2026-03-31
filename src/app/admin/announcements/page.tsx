@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import ArchiveButton from "@/components/ui/ArchiveButton";
@@ -8,6 +9,7 @@ import AnnouncementFormModal from "./AnnouncementFormModal";
 export const metadata: Metadata = { title: "Admin – Announcements" };
 
 async function getAnnouncements() {
+  await connection();
   return db.announcement.findMany({
     where: { archived: false },
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],

@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
@@ -9,6 +10,7 @@ export default async function ThreadPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await connection();
   const { id } = await params;
 
   const thread = await db.thread.findUnique({

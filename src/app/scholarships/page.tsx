@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 
 export const metadata: Metadata = {
@@ -7,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 async function getScholarships() {
+  await connection();
   return db.scholarship.findMany({
     where: { archived: false },
     orderBy: { year: "desc" },

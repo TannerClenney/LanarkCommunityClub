@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import ArchiveButton from "@/components/ui/ArchiveButton";
 import { archiveScholarship } from "@/app/actions/admin";
@@ -7,6 +8,7 @@ import ScholarshipFormModal from "./ScholarshipFormModal";
 export const metadata: Metadata = { title: "Admin – Scholarships" };
 
 async function getScholarships() {
+  await connection();
   return db.scholarship.findMany({
     where: { archived: false },
     orderBy: { year: "desc" },

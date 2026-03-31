@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import ArchiveButton from "@/components/ui/ArchiveButton";
 import { archiveGalleryItem } from "@/app/actions/admin";
@@ -7,6 +8,7 @@ import GalleryFormModal from "./GalleryFormModal";
 export const metadata: Metadata = { title: "Admin – Gallery" };
 
 async function getItems() {
+  await connection();
   return db.galleryItem.findMany({
     where: { archived: false },
     orderBy: { createdAt: "desc" },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { formatDateShort, formatDate } from "@/lib/utils";
 export const metadata: Metadata = { title: "Member Dashboard" };
 
 async function getDashboardData() {
+  await connection();
   const [recentAnnouncements, upcomingEvents, recentThreads] = await Promise.all([
     db.announcement.findMany({
       where: { archived: false },

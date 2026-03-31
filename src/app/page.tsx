@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDateShort } from "@/lib/utils";
 
 async function getHomeData() {
+  await connection();
   const [upcomingEvents, featuredProjects, highlights] = await Promise.all([
     db.event.findMany({
       where: { archived: false, isPublic: true, startDate: { gte: new Date() } },
