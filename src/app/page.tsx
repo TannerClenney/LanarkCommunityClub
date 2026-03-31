@@ -3,16 +3,15 @@ import { connection } from "next/server";
 import { db, hasDatabase } from "@/lib/db";
 import {
   mockEvents,
-  sortEventsByMonth,
+  getFeaturedEvents,
   mockFeaturedProjects,
   mockHighlights,
 } from "@/lib/mock-data";
 
 async function getHomeData() {
   if (!hasDatabase()) {
-    const sortedEvents = sortEventsByMonth(mockEvents);
     return {
-      upcomingEvents: sortedEvents.slice(0, 3),
+      upcomingEvents: getFeaturedEvents(mockEvents),
       featuredProjects: mockFeaturedProjects,
       highlights: mockHighlights,
     };

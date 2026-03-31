@@ -10,6 +10,7 @@ const now = new Date();
  * Event interface for both homepage and events page.
  * @property date - Human-readable date string (e.g., "June 26–27, 2026")
  * @property monthDay - [month, day] tuple for chronological sorting across all events
+ * @property featuredOnHome - Show this event in the homepage curated preview
  */
 export interface Event {
   id: string;
@@ -19,6 +20,7 @@ export interface Event {
   location?: string;
   image?: string;
   monthDay: [number, number]; // [month: 1-12, day: 1-31] for sorting
+  featuredOnHome: boolean;
 }
 
 /**
@@ -30,47 +32,52 @@ export const mockEvents: Event[] = [
     id: "say-no-to-snow",
     title: "Say No To Snow 5K Race",
     description:
-      "A friendly 5K race organized by the Lanark Community of Churches to promote fitness and community spirit.",
+      "A friendly 5K run to benefit the Lanark Community of Churches. Join neighbors and promote fitness and community spirit.",
     date: "February 27",
     location: "Lanark Parks & Recreation",
     monthDay: [2, 27],
+    featuredOnHome: false,
   },
   {
     id: "old-settlers-days",
     title: "Old Settlers Days Music and Beer Tent",
     description:
-      "Join us for live music, local beer, and community celebrations at the annual Old Settlers Days.",
+      "Join us for live music, local beer, and community celebrations at the annual Old Settlers Days festival.",
     date: "June 26–27",
     location: "Lanark Community Grounds",
     image: "/images/events/old-settlers-poster.jpg",
     monthDay: [6, 26],
+    featuredOnHome: true,
   },
   {
     id: "fall-fest",
     title: "Fall Fest – Cooking and Fun",
     description:
-      "Celebrate autumn with community cooking demonstrations, food tastings, and family-friendly activities.",
+      "Celebrate autumn with cooking demonstrations, food tastings, and family-friendly activities throughout the day.",
     date: "October 10",
     location: "Central Park Pavilion",
     monthDay: [10, 10],
+    featuredOnHome: true,
   },
   {
     id: "haunted-house",
     title: "Citywide Haunted House",
     description:
-      "Experience thrills and chills at the annual community haunted house, perfect for all who dare to enter.",
+      "Experience thrills and chills at the annual community haunted house. A classic Halloween tradition for all ages.",
     date: "October 31",
     location: "Historic Downtown Building",
     monthDay: [10, 31],
+    featuredOnHome: true,
   },
   {
     id: "youth-basketball",
     title: "Youth Basketball Camp",
     description:
-      "A fun and instructional basketball camp for community youth, organized with the Lanark Athletic Club.",
+      "A fun and instructional camp for community youth, organized in partnership with the Lanark Athletic Club.",
     date: "December 11",
     location: "Lanark High School Gymnasium",
     monthDay: [12, 11],
+    featuredOnHome: false,
   },
 ];
 
@@ -122,78 +129,20 @@ export const mockHighlights = [
   },
 ];
 
-export const mockUpcomingEvents = [
-  {
-    id: "mock-event-spring-breakfast",
-    title: "Spring Pancake Breakfast",
-    description:
-      "Kick off spring with pancakes, coffee, and conversation. Breakfast proceeds support local youth programs.",
-    location: "Lanark Community Hall",
-    startDate: new Date(now.getFullYear(), now.getMonth() + 1, 12, 8, 30),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 1, 12, 11, 0),
-    isPublic: true,
-    isFeatured: true,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: "mock-event-cleanup-day",
-    title: "Community Cleanup Day",
-    description:
-      "Join neighbors to clean parks and downtown blocks. Gloves, trash bags, and water stations will be provided.",
-    location: "Lincoln Park Main Entrance",
-    startDate: new Date(now.getFullYear(), now.getMonth() + 1, 26, 9, 0),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 1, 26, 12, 30),
-    isPublic: true,
-    isFeatured: false,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: "mock-event-spring-member-meeting",
-    title: "Quarterly Member Meeting",
-    description:
-      "Members review current projects, vote on spring initiatives, and hear committee updates.",
-    location: "Club Meeting Room",
-    startDate: new Date(now.getFullYear(), now.getMonth() + 2, 4, 18, 30),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 2, 4, 20, 0),
-    isPublic: false,
-    isFeatured: false,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: "mock-event-scholarship-night",
-    title: "Scholarship Fundraiser Night",
-    description:
-      "An evening of dinner, raffle baskets, and a silent auction to raise scholarship funds for graduating seniors.",
-    location: "Lanark VFW Hall",
-    startDate: new Date(now.getFullYear(), now.getMonth() + 2, 22, 17, 30),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 2, 22, 21, 30),
-    isPublic: true,
-    isFeatured: true,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: "mock-event-summer-picnic",
-    title: "Summer Family Picnic",
-    description:
-      "Bring lawn chairs and enjoy games, music, and a shared picnic with families from across the community.",
-    location: "North Shelter, Lanark City Park",
-    startDate: new Date(now.getFullYear(), now.getMonth() + 3, 14, 11, 0),
-    endDate: new Date(now.getFullYear(), now.getMonth() + 3, 14, 15, 0),
-    isPublic: true,
-    isFeatured: false,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-];
+/**
+ * Get featured events for homepage preview, sorted chronologically.
+ * Returns events marked with featuredOnHome: true.
+ */
+export function getFeaturedEvents(events: Event[]): Event[] {
+  return events
+    .filter((e) => e.featuredOnHome)
+    .sort((a, b) => {
+      const [aMonth, aDay] = a.monthDay;
+      const [bMonth, bDay] = b.monthDay;
+      if (aMonth !== bMonth) return aMonth - bMonth;
+      return aDay - bDay;
+    });
+}
 
 export const mockFeaturedProjects = [
   {
