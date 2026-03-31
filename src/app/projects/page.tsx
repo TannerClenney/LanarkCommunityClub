@@ -1,22 +1,13 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
-import { db } from "@/lib/db";
+import { mockProjects } from "@/lib/mock-data";
 
 export const metadata: Metadata = {
   title: "Projects",
   description: "Community impact projects completed by the Lanark Community Club.",
 };
 
-async function getProjects() {
-  await connection();
-  return db.project.findMany({
-    where: { archived: false },
-    orderBy: [{ isFeatured: "desc" }, { year: "desc" }, { createdAt: "desc" }],
-  });
-}
-
-export default async function ProjectsPage() {
-  const projects = await getProjects();
+export default function ProjectsPage() {
+  const projects = mockProjects;
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
