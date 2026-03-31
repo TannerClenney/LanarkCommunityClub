@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import HighlightFormModal from "./HighlightFormModal";
 import { auth } from "@/lib/auth";
@@ -7,6 +8,7 @@ import { revalidatePath } from "next/cache";
 export const metadata: Metadata = { title: "Admin – Homepage Highlights" };
 
 async function getHighlights() {
+  await connection();
   return db.homepageHighlight.findMany({
     where: { active: true },
     orderBy: { sortOrder: "asc" },

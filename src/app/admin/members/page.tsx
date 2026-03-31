@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import MemberRoleSelect from "./MemberRoleSelect";
@@ -6,6 +7,7 @@ import MemberRoleSelect from "./MemberRoleSelect";
 export const metadata: Metadata = { title: "Admin – Members" };
 
 async function getMembers() {
+  await connection();
   return db.user.findMany({
     orderBy: [{ role: "asc" }, { createdAt: "desc" }],
     select: { id: true, name: true, email: true, role: true, createdAt: true },

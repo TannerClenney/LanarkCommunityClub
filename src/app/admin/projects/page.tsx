@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import ArchiveButton from "@/components/ui/ArchiveButton";
 import { archiveProject } from "@/app/actions/admin";
@@ -7,6 +8,7 @@ import Link from "next/link";
 export const metadata: Metadata = { title: "Admin – Projects" };
 
 async function getProjects() {
+  await connection();
   return db.project.findMany({
     where: { archived: false },
     orderBy: { createdAt: "desc" },

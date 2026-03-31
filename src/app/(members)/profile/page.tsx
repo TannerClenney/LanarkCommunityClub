@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import ProfileForm from "./ProfileForm";
@@ -6,6 +7,7 @@ import ProfileForm from "./ProfileForm";
 export const metadata: Metadata = { title: "My Profile" };
 
 export default async function ProfilePage() {
+  await connection();
   const session = await auth();
   const user = await db.user.findUnique({
     where: { id: session!.user!.id },

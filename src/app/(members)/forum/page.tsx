@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
@@ -7,6 +8,7 @@ import NewThreadButton from "./NewThreadButton";
 export const metadata: Metadata = { title: "Discussion Board" };
 
 async function getThreads() {
+  await connection();
   return db.thread.findMany({
     where: { archived: false },
     orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],

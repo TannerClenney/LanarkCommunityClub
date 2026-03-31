@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import Link from "next/link";
 
 export const metadata: Metadata = { title: "Admin Overview" };
 
 async function getStats() {
+  await connection();
   const [events, projects, scholarships, announcements, members, threads, contacts] = await Promise.all([
     db.event.count({ where: { archived: false } }),
     db.project.count({ where: { archived: false } }),

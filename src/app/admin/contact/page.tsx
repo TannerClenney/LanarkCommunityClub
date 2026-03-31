@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
 import MarkReadButton from "./MarkReadButton";
@@ -6,6 +7,7 @@ import MarkReadButton from "./MarkReadButton";
 export const metadata: Metadata = { title: "Admin – Contact Inbox" };
 
 async function getMessages() {
+  await connection();
   return db.contactSubmission.findMany({
     orderBy: [{ read: "asc" }, { createdAt: "desc" }],
   });

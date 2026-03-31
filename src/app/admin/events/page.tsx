@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import { archiveEvent } from "@/app/actions/admin";
 export const metadata: Metadata = { title: "Admin – Events" };
 
 async function getEvents() {
+  await connection();
   return db.event.findMany({
     where: { archived: false },
     orderBy: { startDate: "asc" },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { db } from "@/lib/db";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
@@ -6,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 export const metadata: Metadata = { title: "Announcements" };
 
 async function getAnnouncements() {
+  await connection();
   return db.announcement.findMany({
     where: { archived: false },
     orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],

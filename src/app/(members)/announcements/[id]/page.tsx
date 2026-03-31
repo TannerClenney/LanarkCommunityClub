@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { formatDateTime } from "@/lib/utils";
@@ -8,6 +9,7 @@ export default async function AnnouncementDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  await connection();
   const { id } = await params;
   const announcement = await db.announcement.findUnique({
     where: { id, archived: false },
