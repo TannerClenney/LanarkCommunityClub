@@ -2,13 +2,12 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import type { Role } from "@/generated/prisma/enums";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter: PrismaAdapter(db) as any,
-  session: { strategy: "jwt" },
+const authConfig = {
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  session: { strategy: "jwt" as const },
   pages: {
     signIn: "/login",
     error: "/login",
@@ -21,6 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        if (!hasDatabase()) return null;
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await db.user.findUnique({
@@ -46,14 +46,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as { id: string; role: Role }).role;
+        token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: any }) {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
@@ -61,4 +61,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-});
+};
+
+const authOptions = hasDatabase()
+  ? {
+      ...authConfig,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      adapter: PrismaAdapter(db) as any,
+    }
+  : authConfig;
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authOptions);
