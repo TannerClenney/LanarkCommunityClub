@@ -53,7 +53,7 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-bold text-emerald-700 mb-1">
           Welcome back, {session?.user?.name?.split(" ")[0] ?? "Member"}!
         </h1>
-        <p className="text-zinc-500 text-sm">Lanark Community Club — Member Hub</p>
+        <p className="text-zinc-500 text-sm">Missed a meeting? Start here to catch up and stay involved.</p>
       </div>
 
       {/* Quick links */}
@@ -76,22 +76,32 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-semibold text-emerald-700 mb-4">Club Topics</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {stickyTopics.map((topic) => (
-              <Link
+              <article
                 key={topic.id}
-                href={topic.href}
-                className="group bg-white rounded-xl border border-emerald-100 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all p-5"
+                className={`group bg-white rounded-xl border shadow-sm transition-all p-5 ${
+                  topic.id === "sticky-meeting-notes"
+                    ? "border-emerald-300 ring-1 ring-emerald-100"
+                    : "border-emerald-100"
+                }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-1">
                   <p className="text-sm font-semibold text-zinc-900 group-hover:text-emerald-700 transition-colors">
                     {topic.title}
                   </p>
-                  <span className="shrink-0 text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-2 py-0.5 font-medium">
-                    Pinned
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {topic.id === "sticky-meeting-notes" && (
+                      <span className="shrink-0 text-xs bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2 py-0.5 font-medium">
+                        Start here
+                      </span>
+                    )}
+                    <span className="shrink-0 text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-full px-2 py-0.5 font-medium">
+                      Pinned
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-zinc-500 leading-relaxed mb-3">{topic.description}</p>
+                <p className="text-xs text-zinc-500 leading-relaxed mb-2">{topic.description}</p>
                 <p className="text-xs text-zinc-400">{topic.updatedLabel}</p>
-              </Link>
+              </article>
             ))}
           </div>
         </section>
@@ -135,7 +145,7 @@ export default async function DashboardPage() {
             {/* Announcements */}
             <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-base font-semibold text-zinc-800">Announcements</h2>
+                <h2 className="text-base font-semibold text-zinc-800">Latest Announcements</h2>
                 <Link href="/announcements" className="text-xs text-emerald-700 hover:underline">
                   All →
                 </Link>
@@ -183,7 +193,7 @@ export default async function DashboardPage() {
                       <div>
                         <p className="text-sm font-medium text-zinc-900 leading-snug">{e.title}</p>
                         {e.location && (
-                          <p className="text-xs text-zinc-400">📍 {e.location}</p>
+                          <p className="text-xs text-zinc-400">{e.location}</p>
                         )}
                       </div>
                       <p className="text-xs text-emerald-600 font-semibold shrink-0">

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
@@ -6,11 +7,33 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
   throw new Error("DATABASE_URL environment variable is not set.");
 }
-const adapter = new PrismaPg({ connectionString });
+const adapterUrl = new URL(connectionString);
+adapterUrl.searchParams.delete("sslmode");
+
+const adapter = new PrismaPg({
+  connectionString: adapterUrl.toString(),
+  ssl: { rejectUnauthorized: false },
+});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("Seeding database…");
+
+  // ─── Local test admin user ─────────────────────────────────────────────────
+  const localAdminPassword = await bcrypt.hash("password123", 12);
+  await prisma.user.upsert({
+    where: { email: "admin@lanark.com" },
+    update: {
+      password: localAdminPassword,
+      role: "ADMIN",
+    },
+    create: {
+      name: "Local Admin",
+      email: "admin@lanark.com",
+      password: localAdminPassword,
+      role: "ADMIN",
+    },
+  });
 
   // ─── Admin user ─────────────────────────────────────────────────────────────
   const adminPassword = await bcrypt.hash("admin123!", 12);
@@ -211,6 +234,7 @@ async function main() {
 
   console.log("✅ Seed complete.");
   console.log("\nSample logins:");
+  console.log("  admin@lanark.com / password123");
   console.log("  admin@lanarkcommunityclub.com / admin123!");
   console.log("  officer@lanarkcommunityclub.com / officer123!");
   console.log("  member@lanarkcommunityclub.com / member123!");

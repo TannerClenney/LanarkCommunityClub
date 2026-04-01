@@ -249,36 +249,36 @@ export const stickyTopics: StickyTopic[] = [
     id: "sticky-club-rules",
     title: "Club Rules",
     description:
-      "Bylaws, conduct expectations, and membership guidelines for the Lanark Community Club.",
-    href: "/members/forum/sticky-club-rules",
-    updatedLabel: "Updated January 2026",
+      "Start with our bylaws, member expectations, and practical guidelines for participating in meetings, events, and club discussions.",
+    href: "/members/topics/club-rules",
+    updatedLabel: "Reference topic",
     pinned: true,
   },
   {
     id: "sticky-meeting-notes",
     title: "Meeting Notes & Updates",
     description:
-      "Summaries and action items from recent monthly meetings. Check here after each meeting.",
-    href: "/members/forum/sticky-meeting-notes",
-    updatedLabel: "Updated March 2026",
+      "Catch up on key decisions, open action items, and officer updates from recent monthly meetings so you can jump back in quickly.",
+    href: "/members/topics/meeting-notes",
+    updatedLabel: "Catch up here first",
     pinned: true,
   },
   {
     id: "sticky-event-coordination",
     title: "Upcoming Event Coordination",
     description:
-      "Planning threads for upcoming club events — tasks, sign-ups, and logistics discussed here.",
-    href: "/members/forum/sticky-event-coordination",
-    updatedLabel: "Updated March 2026",
+      "Find current event plans, volunteer sign-up needs, and day-of coordination notes so everyone knows what is covered and what still needs help.",
+    href: "/members/topics/upcoming-event-coordination",
+    updatedLabel: "Planning in progress",
     pinned: true,
   },
   {
     id: "sticky-volunteer-needs",
     title: "Volunteer Needs",
     description:
-      "Current openings for volunteers. Post availability or reply to any open request.",
-    href: "/members/forum/sticky-volunteer-needs",
-    updatedLabel: "Updated February 2026",
+      "See open volunteer requests across club projects and events, including who to contact and where one extra set of hands can help most.",
+    href: "/members/topics/volunteer-needs",
+    updatedLabel: "Open ways to help",
     pinned: true,
   },
 ];
