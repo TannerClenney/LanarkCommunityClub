@@ -48,7 +48,7 @@ export default async function HomePage() {
           Welcome to the Lanark Community Club
         </h1>
         <p className="text-lg md:text-xl text-zinc-700 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Neighbors serving neighbors in Lanark, Illinois since 1965. Join us for events,
+          Neighbors serving neighbors in Lanark, Illinois. Join us for events,
           community projects, and good company.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -107,12 +107,12 @@ export default async function HomePage() {
                 key={event.id}
                 className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
               >
-                <p className="text-xs text-emerald-700 font-semibold uppercase mb-1">
-                  {event.dateLabel}
-                </p>
+                <p className="text-sm font-semibold text-emerald-700">📅 {event.dateLabel}</p>
                 <h3 className="text-lg font-bold text-zinc-900 mb-2">{event.title}</h3>
                 <p className="text-sm text-zinc-700 line-clamp-2 leading-relaxed">{event.description}</p>
-                {event.location && <p className="text-xs text-zinc-500 mt-2">📍 {event.location}</p>}
+                {event.location && (
+                  <p className="text-sm font-medium text-emerald-700 mt-2">📍 {event.location}</p>
+                )}
               </div>
             ))}
           </div>

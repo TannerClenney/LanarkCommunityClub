@@ -85,7 +85,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-12">
+      <section className="mt-16">
         <div className="bg-emerald-50 rounded-xl border border-emerald-200 shadow-sm hover:shadow-md transition-shadow p-6 md:p-7">
           <h3 className="text-lg font-bold text-zinc-900 mb-2">Help Us Tell Our Story</h3>
           <p className="text-zinc-700 leading-relaxed text-sm md:text-base">

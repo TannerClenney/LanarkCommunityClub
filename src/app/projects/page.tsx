@@ -43,7 +43,7 @@ export default function ProjectsPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="font-bold text-zinc-900 text-lg">{project.title}</h3>
                   {project.isFeatured && (
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
                       Featured
                     </span>
                   )}

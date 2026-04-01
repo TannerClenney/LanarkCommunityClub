@@ -42,7 +42,7 @@ export default function EventsPage() {
                   </div>
                 )}
 
-                <h3 className="text-xl font-bold text-zinc-900 mb-2">{event.title}</h3>
+                <h3 className="text-lg font-bold text-zinc-900 mb-2">{event.title}</h3>
 
                 <p className="text-zinc-700 text-sm mb-4 leading-relaxed">{event.description}</p>
 
