@@ -234,3 +234,51 @@ export const mockProjects = [
     updatedAt: now,
   },
 ];
+
+export type StickyTopic = {
+  id: string;
+  title: string;
+  description: string;
+  href: string;
+  updatedLabel: string;
+  pinned: true;
+};
+
+export const stickyTopics: StickyTopic[] = [
+  {
+    id: "sticky-club-rules",
+    title: "Club Rules",
+    description:
+      "Bylaws, conduct expectations, and membership guidelines for the Lanark Community Club.",
+    href: "/members/forum/sticky-club-rules",
+    updatedLabel: "Updated January 2026",
+    pinned: true,
+  },
+  {
+    id: "sticky-meeting-notes",
+    title: "Meeting Notes & Updates",
+    description:
+      "Summaries and action items from recent monthly meetings. Check here after each meeting.",
+    href: "/members/forum/sticky-meeting-notes",
+    updatedLabel: "Updated March 2026",
+    pinned: true,
+  },
+  {
+    id: "sticky-event-coordination",
+    title: "Upcoming Event Coordination",
+    description:
+      "Planning threads for upcoming club events — tasks, sign-ups, and logistics discussed here.",
+    href: "/members/forum/sticky-event-coordination",
+    updatedLabel: "Updated March 2026",
+    pinned: true,
+  },
+  {
+    id: "sticky-volunteer-needs",
+    title: "Volunteer Needs",
+    description:
+      "Current openings for volunteers. Post availability or reply to any open request.",
+    href: "/members/forum/sticky-volunteer-needs",
+    updatedLabel: "Updated February 2026",
+    pinned: true,
+  },
+];
