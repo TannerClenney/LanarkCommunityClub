@@ -10,56 +10,54 @@ const events: SiteEvent[] = sortEventsByMonth(mockEvents);
 
 export default function EventsPage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold text-green-800 mb-2">Community Events</h1>
-      <p className="text-gray-600 mb-8">
-        Discover and join the vibrant events that bring our community together.
-      </p>
+    <div className="max-w-5xl mx-auto px-4 py-12 bg-stone-50 text-zinc-800">
+      <section className="bg-stone-100 border border-emerald-200 rounded-2xl px-6 py-16 md:px-10">
+        <h1 className="text-4xl md:text-5xl font-bold text-emerald-700 mb-4">Community Events</h1>
+        <p className="text-lg text-zinc-700 max-w-3xl leading-relaxed">
+          Discover and join the vibrant events that bring our community together.
+        </p>
+      </section>
 
-      <div className="grid gap-6">
-        {events.map((event) => (
-          <div
-            key={event.id}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-200"
-          >
-            {event.image && (
-              <div className="w-full h-48 bg-gray-100 overflow-hidden">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+      <section className="mt-16">
+        <h2 className="text-2xl font-semibold text-emerald-700 mb-5">Upcoming Events</h2>
 
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                {event.title}
-              </h2>
-
-              <p className="text-gray-700 text-sm mb-4">{event.description}</p>
-
-              <div className="space-y-2">
-                <p className="text-lg font-semibold text-green-700">
-                  📅 {event.dateLabel}
-                </p>
-
-                {event.location && (
-                  <p className="text-gray-600 text-sm">
-                    📍 {event.location}
-                  </p>
-                )}
-              </div>
-            </div>
+        {events.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6 text-zinc-600">
+            No events scheduled. Check back soon!
           </div>
-        ))}
-      </div>
+        ) : (
+          <div className="grid gap-6">
+            {events.map((event) => (
+              <div
+                key={event.id}
+                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
+              >
+                {event.image && (
+                  <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-lg mb-4">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
 
-      {events.length === 0 && (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center text-gray-500">
-          No events scheduled. Check back soon!
-        </div>
-      )}
+                <h3 className="text-xl font-bold text-zinc-900 mb-2">{event.title}</h3>
+
+                <p className="text-zinc-700 text-sm mb-4 leading-relaxed">{event.description}</p>
+
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-emerald-700">📅 {event.dateLabel}</p>
+
+                  {event.location && (
+                    <p className="text-sm font-medium text-emerald-700">📍 {event.location}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
