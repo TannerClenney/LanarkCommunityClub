@@ -9,6 +9,7 @@ const now = new Date();
 export type SiteEvent = {
   id: string;
   title: string;
+  date: string;
   dateLabel: string;
   description: string;
   location?: string;
@@ -45,6 +46,7 @@ export const mockEvents: SiteEvent[] = [
   {
     id: "say-no-to-snow",
     title: "Say No To Snow 5K Race to Benefit the Lanark Community of Churches",
+    date: "2027-02-27",
     dateLabel: "February 27",
     description:
       "A community 5K that supports the Lanark Community of Churches and brings neighbors together in the winter season.",
@@ -53,6 +55,7 @@ export const mockEvents: SiteEvent[] = [
   {
     id: "old-settlers-days",
     title: "Old Settlers Days Music and Beer Tent",
+    date: "2026-06-26",
     dateLabel: "June 26 & 27",
     description:
       "Live music, a welcoming beer tent, and one of Lanark's signature summer community gatherings.",
@@ -63,6 +66,7 @@ export const mockEvents: SiteEvent[] = [
   {
     id: "fall-fest",
     title: "Fall Fest – Cooking and Fun",
+    date: "2026-10-10",
     dateLabel: "October 10",
     description:
       "A festive fall gathering centered on good food, cooking, and family-friendly fun.",
@@ -72,6 +76,7 @@ export const mockEvents: SiteEvent[] = [
   {
     id: "haunted-house",
     title: "Citywide Haunted House",
+    date: "2026-10-31",
     dateLabel: "October 31",
     description:
       "Lanark's Halloween tradition returns with a citywide haunted house experience for the community.",
@@ -81,6 +86,7 @@ export const mockEvents: SiteEvent[] = [
   {
     id: "youth-basketball",
     title: "Youth Basketball Camp with the Athletic Club",
+    date: "2026-12-11",
     dateLabel: "December 11",
     description:
       "A youth camp focused on skill-building and teamwork in partnership with the Athletic Club.",
@@ -90,6 +96,13 @@ export const mockEvents: SiteEvent[] = [
 
 export function sortEventsByMonth(events: SiteEvent[]): SiteEvent[] {
   return [...events].sort((a, b) => {
+    const aDate = Date.parse(a.date);
+    const bDate = Date.parse(b.date);
+
+    if (!Number.isNaN(aDate) && !Number.isNaN(bDate)) {
+      return aDate - bDate;
+    }
+
     const [aMonth, aDay] = getEventSortKey(a.dateLabel);
     const [bMonth, bDay] = getEventSortKey(b.dateLabel);
     if (aMonth !== bMonth) return aMonth - bMonth;
