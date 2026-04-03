@@ -15,11 +15,17 @@ const events: SiteEvent[] = [
 export default function EventsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 bg-stone-50 text-zinc-800">
-      <section className="bg-stone-100 border border-emerald-200 rounded-2xl px-6 py-16 md:px-10">
-        <h1 className="text-4xl md:text-5xl font-bold text-emerald-700 mb-4">Community Events</h1>
-        <p className="text-lg text-zinc-700 max-w-3xl leading-relaxed">
-          Discover and join the vibrant events that bring our community together.
-        </p>
+      <section
+        className="relative overflow-hidden rounded-xl bg-center bg-cover bg-no-repeat"
+        style={{ backgroundImage: "url('/images/events/band-crop-2.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 flex min-h-[20rem] flex-col items-center justify-center px-6 py-16 text-center">
+          <h1 className="text-3xl md:text-5xl font-bold text-white">Community Events</h1>
+          <p className="mt-4 max-w-2xl text-white/90">
+            Discover and join the vibrant events that bring our community together.
+          </p>
+        </div>
       </section>
 
       <section className="mt-16">
