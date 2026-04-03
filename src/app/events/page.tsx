@@ -6,7 +6,11 @@ export const metadata: Metadata = {
   description: "Upcoming community events hosted by the Lanark Community Club.",
 };
 
-const events: SiteEvent[] = sortEventsByMonth(mockEvents);
+const sorted = sortEventsByMonth(mockEvents);
+const events: SiteEvent[] = [
+  ...sorted.filter((e) => e.id === "old-settlers-days"),
+  ...sorted.filter((e) => e.id !== "old-settlers-days"),
+];
 
 export default function EventsPage() {
   return (
@@ -33,13 +37,12 @@ export default function EventsPage() {
                   key={event.id}
                   className="max-w-2xl mx-auto bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden"
                 >
-                  <div className="relative w-full h-56 md:h-64">
+                  <div className="w-full bg-stone-100 flex items-center justify-center p-2 rounded-t-xl" style={{minHeight: "20rem"}}>
                     <img
                       src="/images/events/band-schedule.png"
                       alt="Old Settlers Days music schedule"
-                      className="w-full h-full object-cover"
+                      className="max-w-full max-h-80 object-contain rounded"
                     />
-                    <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
                   </div>
 
                   <div className="p-5 md:p-6">
