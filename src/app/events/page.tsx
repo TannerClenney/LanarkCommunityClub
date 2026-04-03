@@ -35,7 +35,7 @@ export default function EventsPage() {
                 >
                   <div className="relative w-full h-56 md:h-64">
                     <img
-                      src="/images/events/band-schedule.jpg"
+                      src="/images/events/band-schedule.png"
                       alt="Old Settlers Days music schedule"
                       className="w-full h-full object-cover"
                     />
