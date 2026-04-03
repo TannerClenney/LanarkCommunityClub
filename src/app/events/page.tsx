@@ -28,32 +28,59 @@ export default function EventsPage() {
         ) : (
           <div className="grid gap-6">
             {events.map((event) => (
-              <div
-                key={event.id}
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
-              >
-                {event.image && (
-                  <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-lg mb-4">
+              event.id === "old-settlers-days" ? (
+                <div
+                  key={event.id}
+                  className="max-w-2xl mx-auto bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden"
+                >
+                  <div className="relative w-full h-56 md:h-64">
                     <img
-                      src={event.image}
-                      alt={event.title}
+                      src="/images/events/band-schedule.jpg"
+                      alt="Old Settlers Days music schedule"
                       className="w-full h-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-black/40" aria-hidden="true" />
                   </div>
-                )}
 
-                <h3 className="text-lg font-bold text-zinc-900 mb-2">{event.title}</h3>
-
-                <p className="text-zinc-700 text-sm mb-4 leading-relaxed">{event.description}</p>
-
-                <div className="space-y-2">
-                  <p className="text-sm font-semibold text-emerald-700">📅 {event.dateLabel}</p>
-
-                  {event.location && (
-                    <p className="text-sm font-medium text-emerald-700">📍 {event.location}</p>
-                  )}
+                  <div className="p-5 md:p-6">
+                    <h3 className="text-xl font-bold text-zinc-900 mb-2">Old Settlers Days – Music & Beer Tent</h3>
+                    <p className="text-zinc-700 leading-relaxed mb-4">
+                      Two days of live music, cold drinks, and small-town summer energy.
+                    </p>
+                    <div className="space-y-1 text-sm font-medium text-emerald-700">
+                      <p>June 26–27</p>
+                      <p>Lanark Community Grounds</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div
+                  key={event.id}
+                  className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
+                >
+                  {event.image && (
+                    <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-lg mb-4">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <h3 className="text-lg font-bold text-zinc-900 mb-2">{event.title}</h3>
+
+                  <p className="text-zinc-700 text-sm mb-4 leading-relaxed">{event.description}</p>
+
+                  <div className="space-y-2">
+                    <p className="text-sm font-semibold text-emerald-700">📅 {event.dateLabel}</p>
+
+                    {event.location && (
+                      <p className="text-sm font-medium text-emerald-700">📍 {event.location}</p>
+                    )}
+                  </div>
+                </div>
+              )
             ))}
           </div>
         )}
