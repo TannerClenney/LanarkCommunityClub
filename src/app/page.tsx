@@ -30,7 +30,10 @@ export default function HomePage() {
       <section className="relative isolate min-h-[68vh] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/events/old-settlers-flyer-friday.jpg')" }}
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=1800&q=80')",
+          }}
         />
         <div className="absolute inset-0 bg-black/70" />
         <div className="relative z-10 mx-auto flex min-h-[68vh] max-w-3xl items-center px-4 py-16 sm:py-20">
@@ -39,10 +42,10 @@ export default function HomePage() {
               Old Settlers Days - Music in the Park
             </h1>
             <p className="mt-5 text-lg font-semibold text-white sm:text-xl">
-              Lanark, Illinois • June 26-27
+              June 26-27 • Lanark, Illinois
             </p>
             <p className="mx-auto mt-5 max-w-2xl text-base text-white sm:text-lg">
-              Live music, beer garden, food, games, and 50/50 raffle
+              Live music, beer garden, food, games & 50/50 raffle
             </p>
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center">
               <Link
@@ -90,7 +93,7 @@ export default function HomePage() {
       </section>
 
       <ImageBand
-        imageUrl="/images/events/old-settlers-flyer-saturday.jpg"
+        imageUrl="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?auto=format&fit=crop&w=1800&q=80"
         label="Two Days of Live Music in Lanark"
       />
 
@@ -115,24 +118,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      <ImageBand imageUrl="/images/events/old-settlers-flyer-friday.jpg" />
+      <ImageBand imageUrl="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1800&q=80" />
 
       <section className="bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-5xl px-4">
-          <h2 className="text-2xl font-bold">Event Flyers</h2>
+          <h2 className="text-2xl font-bold">Event Lineup & Details</h2>
           <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/events/old-settlers-flyer-friday.jpg"
-              alt="Old Settlers Days Friday event flyer"
-              className="h-auto w-full rounded-xl object-contain shadow-sm"
-            />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/events/old-settlers-flyer-saturday.jpg"
-              alt="Old Settlers Days Saturday event flyer"
-              className="h-auto w-full rounded-xl object-contain shadow-sm"
-            />
+            <div className="overflow-hidden rounded-lg shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/events/friday-three-on-the-tree.png"
+                alt="Friday lineup flyer featuring Three on the Tree"
+                className="h-auto w-full object-cover transition-transform duration-200 hover:scale-[1.02]"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-sm">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/events/saturday-charlie-rae.png"
+                alt="Saturday lineup flyer featuring Charlie Rae"
+                className="h-auto w-full object-cover transition-transform duration-200 hover:scale-[1.02]"
+              />
+            </div>
+            <div className="overflow-hidden rounded-lg shadow-sm sm:col-span-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/events/saturday-the-beaux.png"
+                alt="Saturday lineup flyer featuring The Beaux"
+                className="h-auto w-full object-cover transition-transform duration-200 hover:scale-[1.02]"
+              />
+            </div>
           </div>
         </div>
       </section>
