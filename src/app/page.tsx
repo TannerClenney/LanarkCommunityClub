@@ -121,18 +121,19 @@ export default function HomePage() {
         <div className="mx-auto max-w-5xl px-4">
           <h2 className="text-2xl font-bold">Event Flyers</h2>
           <div className="mt-5 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/events/old-settlers-flyer-friday.jpg"
-            alt="Old Settlers Days Friday event flyer"
-            className="h-auto w-full rounded-xl object-contain shadow-sm"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/events/old-settlers-flyer-saturday.jpg"
-            alt="Old Settlers Days Saturday event flyer"
-            className="h-auto w-full rounded-xl object-contain shadow-sm"
-          />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/events/old-settlers-flyer-friday.jpg"
+              alt="Old Settlers Days Friday event flyer"
+              className="h-auto w-full rounded-xl object-contain shadow-sm"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/events/old-settlers-flyer-saturday.jpg"
+              alt="Old Settlers Days Saturday event flyer"
+              className="h-auto w-full rounded-xl object-contain shadow-sm"
+            />
+          </div>
         </div>
       </section>
     </main>
