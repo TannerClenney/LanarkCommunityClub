@@ -6,9 +6,9 @@ export default function Footer() {
     <footer className="bg-green-900 text-green-100 mt-auto">
       <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
-          <h3 className="font-bold text-lg mb-2">🌳 Lanark Community Club</h3>
+          <h3 className="font-bold text-lg mb-2">Lanark Community Club</h3>
           <p className="text-sm text-green-300">
-            Serving the Lanark, Illinois community since 1965. A place for neighbors to connect, serve, and celebrate.
+            Community events • Local projects • Lanark, Illinois
           </p>
         </div>
         <div>
