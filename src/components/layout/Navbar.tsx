@@ -23,9 +23,9 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-green-200 transition-colors">About</Link>
           <Link href="/events" className="hover:text-green-200 transition-colors">Events</Link>
           <Link href="/projects" className="hover:text-green-200 transition-colors">Projects</Link>
-          <Link href="/scholarships" className="hover:text-green-200 transition-colors">Scholarships</Link>
-          <Link href="/gallery" className="hover:text-green-200 transition-colors">Gallery</Link>
-          <Link href="/contact" className="hover:text-green-200 transition-colors">Contact</Link>
+          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Scholarships</Link>
+          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Gallery</Link>
+          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Contact</Link>
           <Link href="/donate" className="bg-yellow-500 text-green-900 px-4 py-1 rounded-full font-bold hover:bg-yellow-400 transition-colors">
             Donate
           </Link>
@@ -70,9 +70,9 @@ export default function Navbar() {
           <Link href="/about" onClick={() => setMenuOpen(false)} className="hover:text-green-200">About</Link>
           <Link href="/events" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Events</Link>
           <Link href="/projects" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Projects</Link>
-          <Link href="/scholarships" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Scholarships</Link>
-          <Link href="/gallery" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Gallery</Link>
-          <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Contact</Link>
+          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Scholarships</Link>
+          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Gallery</Link>
+          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Contact</Link>
           <Link href="/donate" onClick={() => setMenuOpen(false)} className="hover:text-green-200 font-bold text-yellow-400">Donate</Link>
           {session ? (
             <>

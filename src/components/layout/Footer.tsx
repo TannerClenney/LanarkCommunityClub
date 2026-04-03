@@ -17,7 +17,7 @@ export default function Footer() {
             <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
             <li><Link href="/events" className="hover:text-white transition-colors">Events</Link></li>
             <li><Link href="/projects" className="hover:text-white transition-colors">Projects</Link></li>
-            <li><Link href="/scholarships" className="hover:text-white transition-colors">Scholarships</Link></li>
+            <li><Link href="/coming-soon" className="hover:text-white transition-colors">Scholarships</Link></li>
             <li><Link href="/donate" className="hover:text-white transition-colors">Donate</Link></li>
           </ul>
         </div>
@@ -25,7 +25,7 @@ export default function Footer() {
           <h4 className="font-semibold mb-2">Contact</h4>
           <p className="text-sm text-green-300">
             Lanark, Illinois<br />
-            <Link href="/contact" className="hover:text-white transition-colors">Send us a message</Link>
+            <Link href="/coming-soon" className="hover:text-white transition-colors">Send us a message</Link>
           </p>
           <div className="flex gap-3 mt-3">
             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-green-300 hover:text-white text-sm transition-colors">Facebook</a>
