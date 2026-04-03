@@ -140,7 +140,7 @@ export default function HomePage() {
                 className="h-auto w-full object-cover transition-transform duration-200 hover:scale-[1.02]"
               />
             </div>
-            <div className="overflow-hidden rounded-lg shadow-sm sm:col-span-2">
+            <div className="overflow-hidden rounded-lg shadow-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/events/saturday-the-beaux.png"
