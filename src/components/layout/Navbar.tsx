@@ -43,9 +43,7 @@ export default function Navbar() {
                 Sign out
               </button>
             </>
-          ) : (
-            <Link href="/login" className="hover:text-green-200 transition-colors">Sign in</Link>
-          )}
+          ) : null}
         </div>
 
         {/* Mobile hamburger */}
@@ -84,9 +82,7 @@ export default function Navbar() {
                 Sign out
               </button>
             </>
-          ) : (
-            <Link href="/login" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Sign in</Link>
-          )}
+          ) : null}
         </div>
       )}
     </nav>
