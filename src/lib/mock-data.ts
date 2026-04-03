@@ -200,7 +200,7 @@ export const mockProjects = [
     description:
       "Coordinated fundraising, local contractor support, and volunteer labor to add safe, accessible restroom facilities at Lanark City Park.",
     status: "completed",
-    year: now.getFullYear() - 1,
+    year: 2018,
     imageUrl: null,
     isFeatured: true,
     archived: false,
@@ -216,19 +216,6 @@ export const mockProjects = [
     year: now.getFullYear() - 2,
     imageUrl: null,
     isFeatured: true,
-    archived: false,
-    createdAt: now,
-    updatedAt: now,
-  },
-  {
-    id: "mock-project-splash-pad-study",
-    title: "Community Splash Pad Feasibility Study",
-    description:
-      "An active planning effort to evaluate location options, utility needs, and grant opportunities for a future splash pad project.",
-    status: "ongoing",
-    year: now.getFullYear(),
-    imageUrl: null,
-    isFeatured: false,
     archived: false,
     createdAt: now,
     updatedAt: now,

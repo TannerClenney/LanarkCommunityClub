@@ -77,7 +77,7 @@ export default function AboutPage() {
             Whether you have a little time or a lot, there is a place for you to contribute.
           </p>
           <a
-            href="/contact"
+            href="/coming-soon"
             className="inline-block bg-orange-500 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-orange-600 transition-colors"
           >
             Contact Us

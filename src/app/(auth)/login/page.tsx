@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import LoginForm from "@/components/forms/LoginForm";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -17,10 +16,7 @@ export default function LoginPage() {
         </p>
         <LoginForm />
         <p className="text-sm text-center text-gray-500 mt-6">
-          New member?{" "}
-          <Link href="/register" className="text-green-700 underline font-medium">
-            Create an account
-          </Link>
+          Member access is currently managed by the club.
         </p>
       </div>
     </div>
