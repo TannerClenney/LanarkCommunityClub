@@ -1,5 +1,3 @@
-// Lanark Community Club – Prisma Schema
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -9,44 +7,24 @@ datasource db {
   provider = "postgresql"
 }
 
-// ─── Auth / User ─────────────────────────────────────────────────────────────
-
-enum Role {
-  PENDING
-  MEMBER
-  SECRETARY
-  TREASURER
-  VICE_PRESIDENT
-  PRESIDENT
-  OFFICER
-  ADMIN
-}
-
-enum TaskStatus {
-  OPEN
-  OWNED
-  DONE
-}
-
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String         @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          Role      @default(PENDING)
+  role          Role           @default(PENDING)
   bio           String?
   phone         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   accounts      Account[]
-  sessions      Session[]
   announcements Announcement[]
-  threads       Thread[]
   posts         Post[]
+  sessions      Session[]
   ownedTasks    Task[]         @relation("TaskOwner")
+  threads       Thread[]
 }
 
 model Account {
@@ -62,8 +40,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -73,8 +50,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -85,25 +61,22 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ─── Public Content ───────────────────────────────────────────────────────────
-
 model Event {
-  id               String      @id @default(cuid())
-  title            String
-  slug             String      @unique
-  description      String
-  location         String?
-  startDate        DateTime
-  endDate          DateTime?
-  isPublic         Boolean     @default(true)
-  isFeatured       Boolean     @default(false)
-  showInMemberHub  Boolean     @default(true)
-  archived         Boolean     @default(false)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-
-  areas            EventArea[]
-  tasks            Task[]
+  id              String      @id @default(cuid())
+  title           String
+  description     String
+  location        String?
+  startDate       DateTime
+  endDate         DateTime?
+  isPublic        Boolean     @default(true)
+  isFeatured      Boolean     @default(false)
+  archived        Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  showInMemberHub Boolean     @default(true)
+  slug            String      @unique
+  areas           EventArea[]
+  tasks           Task[]
 }
 
 model Project {
@@ -155,8 +128,6 @@ model HomepageHighlight {
   updatedAt DateTime @updatedAt
 }
 
-// ─── Members Area ─────────────────────────────────────────────────────────────
-
 model Announcement {
   id        String   @id @default(cuid())
   title     String
@@ -166,8 +137,7 @@ model Announcement {
   authorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  author User @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id])
 }
 
 model Thread {
@@ -180,9 +150,8 @@ model Thread {
   archived  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  author User   @relation(fields: [authorId], references: [id])
-  posts  Post[]
+  posts     Post[]
+  author    User     @relation(fields: [authorId], references: [id])
 }
 
 model Post {
@@ -193,9 +162,8 @@ model Post {
   archived  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  author User   @relation(fields: [authorId], references: [id])
-  thread Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id])
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
 }
 
 model EventArea {
@@ -207,9 +175,8 @@ model EventArea {
   displayOrder Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
-  event Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  tasks Task[]
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tasks        Task[]
 
   @@unique([eventId, slug])
   @@index([eventId, displayOrder])
@@ -224,22 +191,17 @@ model Task {
   status       TaskStatus @default(OPEN)
   ownerId      String?
   displayOrder Int        @default(0)
-  startTime    DateTime?
-  endTime      DateTime?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-
-  event     Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventArea EventArea @relation(fields: [eventAreaId], references: [id], onDelete: Cascade)
-  owner     User?     @relation("TaskOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  eventArea    EventArea  @relation(fields: [eventAreaId], references: [id], onDelete: Cascade)
+  event        Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  owner        User?      @relation("TaskOwner", fields: [ownerId], references: [id])
 
   @@unique([eventAreaId, title])
   @@index([eventId, displayOrder])
   @@index([eventAreaId, displayOrder])
   @@index([ownerId])
 }
-
-// ─── Contact ──────────────────────────────────────────────────────────────────
 
 model ContactSubmission {
   id        String   @id @default(cuid())
@@ -248,4 +210,21 @@ model ContactSubmission {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  PENDING
+  MEMBER
+  OFFICER
+  ADMIN
+  SECRETARY
+  TREASURER
+  VICE_PRESIDENT
+  PRESIDENT
+}
+
+enum TaskStatus {
+  OPEN
+  OWNED
+  DONE
 }
