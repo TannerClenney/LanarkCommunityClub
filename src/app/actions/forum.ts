@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -27,6 +28,9 @@ export async function createThread(formData: FormData) {
     data: { ...parsed.data, authorId: session.user.id },
   });
 
+  revalidatePath("/forum");
+  revalidatePath("/dashboard");
+
   return { success: true, threadId: thread.id };
 }
 
@@ -51,6 +55,10 @@ export async function createPost(formData: FormData) {
     where: { id: parsed.data.threadId },
     data: { updatedAt: new Date() },
   });
+
+  revalidatePath("/forum");
+  revalidatePath(`/forum/${parsed.data.threadId}`);
+  revalidatePath("/dashboard");
 
   return { success: true };
 }

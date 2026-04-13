@@ -42,7 +42,7 @@ export default function DonatePage() {
             <p className="font-semibold mb-1">Online giving coming soon!</p>
             <p>
               We are setting up our secure online payment system. In the meantime, please{" "}
-              <Link href="/coming-soon" className="underline font-medium">contact us</Link>{" "}
+              <Link href="/contact" className="underline font-medium">contact us</Link>{" "}
               to make a donation by check or mail.
             </p>
           </div>
@@ -55,12 +55,12 @@ export default function DonatePage() {
           <li>
             <strong>By mail:</strong> Send a check payable to &ldquo;Lanark Community Club&rdquo; to our
             mailing address.{" "}
-            <Link href="/coming-soon" className="text-green-700 underline">Contact us for address.</Link>
+            <Link href="/contact" className="text-green-700 underline">Contact us for address.</Link>
           </li>
           <li>
             <strong>Volunteer:</strong> Donate your time! We always need help at events and
             with projects.{" "}
-            <Link href="/coming-soon" className="text-green-700 underline">Get in touch.</Link>
+            <Link href="/contact" className="text-green-700 underline">Get in touch.</Link>
           </li>
         </ul>
       </div>

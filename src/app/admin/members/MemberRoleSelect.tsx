@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { updateMemberRole } from "@/app/actions/admin";
 import type { Role } from "@/generated/prisma/enums";
+import { ASSIGNABLE_ROLES } from "@/lib/roles";
 
-const ROLES: Role[] = ["PENDING", "MEMBER", "OFFICER", "ADMIN"];
+const ROLES: Role[] = ASSIGNABLE_ROLES;
 
 export default function MemberRoleSelect({
   userId,

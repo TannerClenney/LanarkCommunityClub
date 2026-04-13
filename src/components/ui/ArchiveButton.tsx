@@ -7,10 +7,12 @@ export default function ArchiveButton({
   id,
   action,
   label = "Archive",
+  className,
 }: {
   id: string;
   action: (id: string) => Promise<{ success: boolean }>;
   label?: string;
+  className?: string;
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -26,7 +28,7 @@ export default function ArchiveButton({
     <button
       onClick={handleClick}
       disabled={loading}
-      className="text-xs text-red-600 hover:underline disabled:opacity-50"
+      className={className ?? "text-xs text-red-600 hover:underline disabled:opacity-50"}
     >
       {loading ? "…" : label}
     </button>

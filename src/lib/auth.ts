@@ -4,6 +4,9 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { db, hasDatabase } from "@/lib/db";
 import type { Role } from "@/generated/prisma/enums";
+import type { Session, User } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
+import type { JWT } from "next-auth/jwt";
 
 const authConfig = {
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
@@ -46,15 +49,15 @@ const authConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
-        token.id = user.id;
+        token.id = user.id ?? token.id;
         token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
-      if (token && session.user) {
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as Role;
       }
@@ -66,8 +69,7 @@ const authConfig = {
 const authOptions = hasDatabase()
   ? {
       ...authConfig,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      adapter: PrismaAdapter(db) as any,
+      adapter: PrismaAdapter(db) as Adapter,
     }
   : authConfig;
 

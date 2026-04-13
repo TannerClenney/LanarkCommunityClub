@@ -19,9 +19,10 @@ export default async function MembersLayout({
           <nav className="space-y-1">
             {[
               { href: "/dashboard", label: "Dashboard" },
-              { href: "/calendar", label: "Calendar" },
+              { href: "/calendar", label: "Events" },
+              { href: "/my-commitments", label: "My Commitments" },
               { href: "/announcements", label: "Announcements" },
-              { href: "/forum", label: "Discussion Board" },
+              { href: "/forum", label: "Discussion" },
               { href: "/profile", label: "My Profile" },
             ].map((item) => (
               <Link

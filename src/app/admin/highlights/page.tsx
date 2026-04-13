@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import HighlightFormModal from "./HighlightFormModal";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { isBoardOrAdminRole } from "@/lib/roles";
 
 export const metadata: Metadata = { title: "Admin – Homepage Highlights" };
 
@@ -18,7 +19,7 @@ async function getHighlights() {
 async function deactivateHighlight(id: string) {
   "use server";
   const session = await auth();
-  if (!session?.user || (session.user.role !== "ADMIN" && session.user.role !== "OFFICER")) return;
+  if (!session?.user || !isBoardOrAdminRole(session.user.role)) return;
   await db.homepageHighlight.update({ where: { id }, data: { active: false } });
   revalidatePath("/admin/highlights");
   revalidatePath("/");

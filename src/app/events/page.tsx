@@ -1,86 +1,156 @@
 import type { Metadata } from "next";
-import { type SiteEvent, mockEvents, sortEventsByMonth } from "@/lib/mock-data";
+import Image from "next/image";
+import { connection } from "next/server";
+import Link from "next/link";
+import { db } from "@/lib/db";
+import { formatDateShort, formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Community Events",
   description: "Upcoming community events hosted by the Lanark Community Club.",
 };
 
-const currentYear = new Date().getFullYear();
-const events = sortEventsByMonth(mockEvents);
-const upcomingEvents = events.filter((event) => new Date(event.date).getFullYear() === currentYear);
-const nextYearEvents = events.filter((event) => new Date(event.date).getFullYear() > currentYear);
+async function getPublicEvents() {
+  await connection();
+  return db.event.findMany({
+    where: { archived: false, isPublic: true },
+    orderBy: { startDate: "asc" },
+  });
+}
 
-function renderEventCard(event: SiteEvent, nextYearLabel = false) {
-  return event.id === "old-settlers-days" ? (
-    <div
+type PublicEvent = Awaited<ReturnType<typeof getPublicEvents>>[number];
+
+const EVENT_CARD_IMAGE_MAP: Record<string, string> = {
+  "old-settlers-days": "/images/events/OldSettlersDays.png",
+  "fall-fest": "/images/events/FallFest.png",
+  "haunted-house": "/images/events/HauntedHouse.png",
+  "say-no-to-snow": "/images/events/SayNoToSnow5K.png",
+};
+
+function formatEventDateRange(event: PublicEvent) {
+  return event.endDate
+    ? `${formatDateShort(event.startDate)} – ${formatDateShort(event.endDate)}`
+    : formatDateShort(event.startDate);
+}
+
+function getEventCardImage(event: PublicEvent) {
+  const mappedSrc = EVENT_CARD_IMAGE_MAP[event.slug];
+
+  if (mappedSrc) {
+    return {
+      src: mappedSrc,
+      alt: `${event.title} event photo`,
+    };
+  }
+
+  if (event.isFeatured) {
+    return {
+      src: "/images/events/band-crop-2.jpg",
+      alt: `${event.title} event photo`,
+    };
+  }
+
+  return null;
+}
+
+function renderEventCard(event: PublicEvent, nextYearLabel = false) {
+  const image = getEventCardImage(event);
+  const dateLabel = formatEventDateRange(event);
+  const publicHref = `/events/${event.slug}`;
+
+  return (
+    <article
       key={event.id}
-      className="max-w-2xl mx-auto bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden"
+      className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div
-        className="w-full bg-stone-100 flex items-center justify-center p-2 rounded-t-xl"
-        style={{ minHeight: "20rem" }}
-      >
-        <img
-          src="/images/events/band-schedule.png"
-          alt="Old Settlers Days music schedule"
-          className="max-w-full max-h-80 object-contain rounded"
-        />
+      <div className="relative h-44 overflow-hidden border-b border-stone-200 bg-stone-100">
+        {image ? (
+          <>
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              sizes="(max-width: 768px) 100vw, 960px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-400 via-lime-300 to-yellow-200" />
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-emerald-700 to-lime-500" />
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-100 via-lime-100 to-white/80" />
+            <div className="absolute inset-x-0 bottom-0 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">
+                Community Event
+              </p>
+              <p className="mt-1 text-sm font-medium text-white/95">{dateLabel}</p>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="p-5 md:p-6">
-        {nextYearLabel ? (
-          <span className="mb-3 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
-            Next Year Event
-          </span>
-        ) : null}
-        <h3 className="text-xl font-bold text-zinc-900 mb-2">Old Settlers Days – Music & Beer Tent</h3>
-        <p className="text-zinc-700 leading-relaxed mb-4">
-          Two days of live music, cold drinks, and small-town summer energy.
-        </p>
-        <div className="space-y-1 text-sm font-medium text-emerald-700">
-          <p>June 26–27</p>
-          <p>Lanark Community Grounds</p>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          {nextYearLabel ? (
+            <span className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
+              Next Year Event
+            </span>
+          ) : null}
+          {event.isFeatured ? (
+            <span className="inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+              Featured
+            </span>
+          ) : null}
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold tracking-tight text-zinc-900">{event.title}</h3>
+            <p className="text-sm leading-6 text-zinc-700">{event.description}</p>
+          </div>
+
+          <div className="grid gap-3 rounded-lg border border-stone-200 bg-stone-50 p-3 sm:grid-cols-2">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Date</p>
+              <p className="mt-1 text-sm font-semibold text-emerald-800">{dateLabel}</p>
+              <p className="text-xs text-zinc-500">Starts {formatDateTime(event.startDate)}</p>
+            </div>
+
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Location</p>
+              <p className="mt-1 text-sm font-semibold text-zinc-800">
+                {event.location ?? "Location to be announced"}
+              </p>
+              <p className="text-xs text-zinc-500">
+                {event.isPublic ? "Open community event" : "Members only"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-stone-200 pt-4">
+          <Link
+            href={publicHref}
+            className="inline-flex items-center rounded-md bg-emerald-700 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
+          >
+            Learn More
+          </Link>
+          <Link href="/contact" className="text-sm font-medium text-green-700 hover:underline">
+            Contact Us
+          </Link>
         </div>
       </div>
-    </div>
-  ) : (
-    <div
-      key={event.id}
-      className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow p-6"
-    >
-      {event.image && (
-        <div className="w-full h-48 bg-gray-100 overflow-hidden rounded-lg mb-4">
-          <img
-            src={event.image}
-            alt={event.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-
-      {nextYearLabel ? (
-        <span className="mb-3 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-800">
-          Next Year Event
-        </span>
-      ) : null}
-
-      <h3 className="text-lg font-bold text-zinc-900 mb-2">{event.title}</h3>
-
-      <p className="text-zinc-700 text-sm mb-4 leading-relaxed">{event.description}</p>
-
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-emerald-700">📅 {event.dateLabel}</p>
-
-        {event.location && (
-          <p className="text-sm font-medium text-emerald-700">📍 {event.location}</p>
-        )}
-      </div>
-    </div>
+    </article>
   );
 }
 
-export default function EventsPage() {
+export default async function EventsPage() {
+  const currentYear = new Date().getFullYear();
+  const events = await getPublicEvents();
+  const upcomingEvents = events.filter((event) => event.startDate.getFullYear() === currentYear);
+  const nextYearEvents = events.filter((event) => event.startDate.getFullYear() > currentYear);
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 bg-stone-50 text-zinc-800">
       <section

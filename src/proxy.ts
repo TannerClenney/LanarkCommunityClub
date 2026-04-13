@@ -1,8 +1,9 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isBoardOrAdminRole } from "@/lib/roles";
 
-const MEMBER_ROUTES = ["/dashboard", "/calendar", "/announcements", "/forum", "/profile"];
+const MEMBER_ROUTES = ["/dashboard", "/calendar", "/announcements", "/forum", "/profile", "/my-commitments", "/members"];
 const ADMIN_ROUTES = ["/admin"];
 
 export async function proxy(req: NextRequest) {
@@ -20,7 +21,7 @@ export async function proxy(req: NextRequest) {
   const isAdminRoute = ADMIN_ROUTES.some((r) => nextUrl.pathname.startsWith(r));
 
   if (isAdminRoute) {
-    if (!isLoggedIn || (role !== "ADMIN" && role !== "OFFICER")) {
+    if (!isLoggedIn || !isBoardOrAdminRole(role)) {
       return NextResponse.redirect(new URL("/login", req.url));
     }
   }
@@ -44,6 +45,8 @@ export const config = {
     "/announcements/:path*",
     "/forum/:path*",
     "/profile/:path*",
+    "/my-commitments/:path*",
+    "/members/:path*",
     "/admin/:path*",
   ],
 };

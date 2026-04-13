@@ -3,19 +3,27 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
+import { isBoardOrAdminRole } from "@/lib/roles";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const isOfficer =
-    session?.user?.role === "OFFICER" || session?.user?.role === "ADMIN";
+  const isOfficer = isBoardOrAdminRole(session?.user?.role);
 
   return (
-    <nav className="bg-green-800 text-white shadow-md">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold tracking-wide hover:text-green-200 transition-colors">
-          🌳 Lanark Community Club
+    <nav className="border-b border-green-700/70 bg-green-800 text-white shadow-sm">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-2 text-white transition-colors hover:text-green-100 sm:gap-2.5"
+        >
+          <span className="shrink-0 text-lg leading-none sm:text-xl" aria-hidden="true">
+            🌳
+          </span>
+          <span className="text-[15px] font-bold leading-none tracking-wide sm:text-xl">
+            Lanark Community Club
+          </span>
         </Link>
 
         {/* Desktop nav */}
@@ -23,9 +31,9 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-green-200 transition-colors">About</Link>
           <Link href="/events" className="hover:text-green-200 transition-colors">Events</Link>
           <Link href="/projects" className="hover:text-green-200 transition-colors">Projects</Link>
-          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Scholarships</Link>
-          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Gallery</Link>
-          <Link href="/coming-soon" className="hover:text-green-200 transition-colors">Contact</Link>
+          <Link href="/scholarships" className="hover:text-green-200 transition-colors">Scholarships</Link>
+          <Link href="/gallery" className="hover:text-green-200 transition-colors">Gallery</Link>
+          <Link href="/contact" className="hover:text-green-200 transition-colors">Contact</Link>
           <Link href="/donate" className="bg-yellow-500 text-green-900 px-4 py-1 rounded-full font-bold hover:bg-yellow-400 transition-colors">
             Donate
           </Link>
@@ -68,9 +76,9 @@ export default function Navbar() {
           <Link href="/about" onClick={() => setMenuOpen(false)} className="hover:text-green-200">About</Link>
           <Link href="/events" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Events</Link>
           <Link href="/projects" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Projects</Link>
-          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Scholarships</Link>
-          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Gallery</Link>
-          <Link href="/coming-soon" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Contact</Link>
+          <Link href="/scholarships" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Scholarships</Link>
+          <Link href="/gallery" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Gallery</Link>
+          <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Contact</Link>
           <Link href="/donate" onClick={() => setMenuOpen(false)} className="hover:text-green-200 font-bold text-yellow-400">Donate</Link>
           {session ? (
             <>

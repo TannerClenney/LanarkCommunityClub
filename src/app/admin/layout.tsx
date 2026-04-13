@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { isBoardOrAdminRole } from "@/lib/roles";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -9,7 +10,7 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  if (session.user.role !== "ADMIN" && session.user.role !== "OFFICER") {
+  if (!isBoardOrAdminRole(session.user.role)) {
     redirect("/dashboard");
   }
 

@@ -24,6 +24,17 @@ export function formatDateTime(date: Date | string): string {
   });
 }
 
+export function formatTime(date: Date | string): string {
+  return new Date(date).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+export function formatTimeRange(start: Date | string, end: Date | string): string {
+  return `${formatTime(start)} – ${formatTime(end)}`;
+}
+
 export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(" ");
 }
