@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { connection } from "next/server";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { formatDateShort } from "@/lib/utils";
 
 const EVENT_IMAGE_MAP: Record<string, string> = {
@@ -33,15 +33,23 @@ const whatWeDo = [
 async function getPublicEvents() {
   await connection();
 
-  return db.event.findMany({
-    where: {
-      archived: false,
-      isPublic: true,
-    },
-    orderBy: {
-      startDate: "asc",
-    },
-  });
+  if (!hasDatabase()) {
+    return [];
+  }
+
+  try {
+    return await db.event.findMany({
+      where: {
+        archived: false,
+        isPublic: true,
+      },
+      orderBy: {
+        startDate: "asc",
+      },
+    });
+  } catch {
+    return [];
+  }
 }
 
 type PublicEvent = Awaited<ReturnType<typeof getPublicEvents>>[number];
