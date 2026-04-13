@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { connection } from "next/server";
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { db, hasDatabase } from "@/lib/db";
 import { formatDateShort, formatDateTime } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -12,10 +12,29 @@ export const metadata: Metadata = {
 
 async function getPublicEvents() {
   await connection();
-  return db.event.findMany({
-    where: { archived: false, isPublic: true },
-    orderBy: { startDate: "asc" },
-  });
+  const dbAvailable = hasDatabase();
+  console.log("[events] hasDatabase:", dbAvailable);
+
+  if (!dbAvailable) {
+    return [];
+  }
+
+  try {
+    const events = await db.event.findMany({
+      where: { archived: false, isPublic: true },
+      orderBy: { startDate: "asc" },
+    });
+    console.log("[events] event query succeeded, count:", events.length);
+    return events;
+  } catch (err) {
+    const error = err as Record<string, unknown>;
+    console.error("[events] event query failed:", {
+      name: error?.name ?? "unknown",
+      code: error?.code ?? "none",
+      message: typeof error?.message === "string" ? error.message.slice(0, 120) : "none",
+    });
+    return [];
+  }
 }
 
 type PublicEvent = Awaited<ReturnType<typeof getPublicEvents>>[number];
