@@ -33,12 +33,15 @@ const whatWeDo = [
 async function getPublicEvents() {
   await connection();
 
-  if (!hasDatabase()) {
+  const dbAvailable = hasDatabase();
+  console.log("[homepage] hasDatabase:", dbAvailable);
+
+  if (!dbAvailable) {
     return [];
   }
 
   try {
-    return await db.event.findMany({
+    const events = await db.event.findMany({
       where: {
         archived: false,
         isPublic: true,
@@ -47,7 +50,15 @@ async function getPublicEvents() {
         startDate: "asc",
       },
     });
-  } catch {
+    console.log("[homepage] event query succeeded, count:", events.length);
+    return events;
+  } catch (err) {
+    const error = err as Record<string, unknown>;
+    console.error("[homepage] event query failed:", {
+      name: error?.name ?? "unknown",
+      code: error?.code ?? "none",
+      message: typeof error?.message === "string" ? error.message.slice(0, 120) : "none",
+    });
     return [];
   }
 }
