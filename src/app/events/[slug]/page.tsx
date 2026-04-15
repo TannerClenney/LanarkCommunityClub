@@ -199,15 +199,15 @@ export default async function PublicEventDetailPage({
             <ul className="mt-4 space-y-3 text-sm text-zinc-700">
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>Public-facing event information without member-only workflow clutter.</span>
+                <span>Live music and entertainment all weekend</span>
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>Clean details for guests, families, volunteers, and first-time visitors.</span>
+                <span>Beer tent, food, and local vendors</span>
               </li>
               <li className="flex gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>Questions about attendance, timing, or logistics? Reach out anytime.</span>
+                <span>A great chance to catch up with friends and neighbors</span>
               </li>
             </ul>
           </div>
