@@ -24,27 +24,61 @@ const authConfig = {
       },
       async authorize(credentials) {
         if (!hasDatabase()) return null;
-        if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await db.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        const email = typeof credentials?.email === "string" ? credentials.email : "";
+        const password = typeof credentials?.password === "string" ? credentials.password : "";
 
-        if (!user || !user.password) return null;
+        if (!email || !password) {
+          console.error("[auth] Credentials authorize failed: missing email or password input", {
+            hasEmail: Boolean(email),
+            hasPassword: Boolean(password),
+          });
+          return null;
+        }
 
-        const passwordMatch = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+        try {
+          const user = await db.user.findUnique({
+            where: { email },
+          });
 
-        if (!passwordMatch) return null;
+          if (!user) {
+            console.error("[auth] Credentials authorize failed: user not found", {
+              email,
+            });
+            return null;
+          }
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role as Role,
-        };
+          if (!user.password) {
+            console.error("[auth] Credentials authorize failed: user missing password hash", {
+              email,
+              userId: user.id,
+            });
+            return null;
+          }
+
+          const passwordMatch = await bcrypt.compare(password, user.password);
+
+          if (!passwordMatch) {
+            console.error("[auth] Credentials authorize failed: password comparison failed", {
+              email,
+              userId: user.id,
+            });
+            return null;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role as Role,
+          };
+        } catch (error) {
+          console.error("[auth] Credentials authorize failed with unexpected exception", {
+            email,
+            error: error instanceof Error ? error.message : error,
+          });
+          return null;
+        }
       },
     }),
   ],
