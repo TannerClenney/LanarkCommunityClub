@@ -12,6 +12,7 @@ export async function proxy(req: NextRequest) {
   const token = await getToken({
     req,
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+    cookieName: "__Secure-authjs.session-token",
   });
 
   console.error("[auth] Proxy token check", {
