@@ -15,7 +15,7 @@ export default async function MembersLayout({
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Sidebar */}
-        <aside className="md:w-48 shrink-0">
+        <aside className="md:w-52 shrink-0">
           <nav className="space-y-1">
             {[
               { href: "/dashboard", label: "Dashboard" },
@@ -28,7 +28,7 @@ export default async function MembersLayout({
               <Link
                 key={item.href}
                 href={item.href}
-                className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-green-50 hover:text-green-800 transition-colors"
+                className="block px-3 py-2.5 rounded-lg text-base font-medium text-gray-800 hover:bg-green-50 hover:text-green-800 transition-colors"
               >
                 {item.label}
               </Link>

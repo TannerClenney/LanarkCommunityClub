@@ -68,10 +68,10 @@ export default async function DashboardPage() {
     <div className="min-h-full space-y-8 bg-stone-50">
       <div>
         <h1 className="mb-1 text-2xl font-bold text-emerald-700">Welcome back, {firstName}!</h1>
-        <p className="text-sm text-zinc-500">
+        <p className="text-base text-zinc-600">
           Start with what matters now, then jump into the event work that needs attention.
         </p>
-        <p className="mt-1 text-sm text-zinc-400 italic">
+        <p className="mt-1 text-base text-zinc-500 italic">
           Everything you do here helps make these events happen.
         </p>
       </div>
@@ -81,7 +81,7 @@ export default async function DashboardPage() {
           <Link
             key={link.href}
             href={link.href}
-            className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition-all hover:border-emerald-300 hover:text-emerald-700 hover:shadow-md"
+            className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-base font-medium text-zinc-800 shadow-sm transition-all hover:border-emerald-300 hover:text-emerald-700 hover:shadow-md"
           >
             {link.label}
           </Link>
@@ -96,24 +96,24 @@ export default async function DashboardPage() {
           whatIOwn={whatIOwn}
         />
 
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-zinc-800">What&apos;s Coming Up</h2>
-            <Link href="/calendar" className="text-xs text-emerald-700 hover:underline">
+            <h2 className="text-lg font-bold text-zinc-900">What&apos;s Coming Up</h2>
+            <Link href="/calendar" className="text-sm font-medium text-emerald-700 hover:underline">
               View all →
             </Link>
           </div>
 
           {activeEvents.length === 0 ? (
-            <p className="text-sm text-zinc-400">No upcoming events yet.</p>
+            <p className="text-base text-zinc-500">No upcoming events yet.</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {activeEvents.map((event) => (
-                <li key={event.id} className="rounded-lg border border-stone-200 bg-stone-50 p-3">
+                <li key={event.id} className="rounded-lg border border-stone-200 bg-stone-50 p-4">
                   <Link href={`/members/events/${event.slug}`} className="block">
-                    <p className="text-sm font-medium text-zinc-900 hover:text-emerald-700">{event.title}</p>
-                    <p className="mt-1 text-xs font-medium text-emerald-700">{event.dateLabel}</p>
-                    {event.location && <p className="mt-1 text-xs text-zinc-500">{event.location}</p>}
+                    <p className="text-base font-semibold text-zinc-900 hover:text-emerald-700">{event.title}</p>
+                    <p className="mt-1 text-sm font-medium text-emerald-700">{event.dateLabel}</p>
+                    {event.location && <p className="mt-1 text-sm text-zinc-600">{event.location}</p>}
                   </Link>
                 </li>
               ))}
@@ -123,34 +123,34 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-zinc-800">Announcements</h2>
-            <Link href="/announcements" className="text-xs text-emerald-700 hover:underline">
+            <h2 className="text-lg font-bold text-zinc-900">Announcements</h2>
+            <Link href="/announcements" className="text-sm font-medium text-emerald-700 hover:underline">
               All →
             </Link>
           </div>
 
           {recentAnnouncements.length === 0 ? (
-            <p className="text-sm text-zinc-400">No announcements yet.</p>
+            <p className="text-base text-zinc-500">No announcements yet.</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {recentAnnouncements.map((announcement) => (
                 <li key={announcement.id}>
                   <Link
                     href={`/announcements/${announcement.id}`}
-                    className="block rounded-lg border border-stone-200 bg-stone-50 p-3 transition-colors hover:bg-white"
+                    className="block rounded-lg border border-stone-200 bg-stone-50 p-4 transition-colors hover:bg-white"
                   >
                     <div className="flex items-center gap-2">
                       {announcement.isPinned && (
-                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                        <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-sm font-medium text-amber-800">
                           Pinned
                         </span>
                       )}
-                      <p className="text-sm font-medium text-zinc-900">{announcement.title}</p>
+                      <p className="text-base font-semibold text-zinc-900">{announcement.title}</p>
                     </div>
-                    <p className="mt-1 line-clamp-2 text-xs text-zinc-500">{announcement.body}</p>
-                    <p className="mt-2 text-xs text-zinc-400">
+                    <p className="mt-1 line-clamp-2 text-sm text-zinc-600">{announcement.body}</p>
+                    <p className="mt-2 text-sm text-zinc-500">
                       {formatDate(announcement.createdAt)} · {announcement.author.name ?? "Club"}
                     </p>
                   </Link>
@@ -160,30 +160,30 @@ export default async function DashboardPage() {
           )}
         </section>
 
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-zinc-800">Recent Discussion</h2>
-            <Link href="/forum" className="text-xs text-emerald-700 hover:underline">
+            <h2 className="text-lg font-bold text-zinc-900">Recent Discussion</h2>
+            <Link href="/forum" className="text-sm font-medium text-emerald-700 hover:underline">
               Board →
             </Link>
           </div>
 
           {recentThreads.length === 0 ? (
-            <p className="text-sm text-zinc-400">No discussion yet. Start a thread when needed.</p>
+            <p className="text-base text-zinc-500">No discussion yet. Start a thread when needed.</p>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-4">
               {recentThreads.map((thread) => (
                 <li key={thread.id}>
                   <Link
                     href={`/forum/${thread.id}`}
-                    className="block rounded-lg border border-stone-200 bg-stone-50 p-3 transition-colors hover:bg-white"
+                    className="block rounded-lg border border-stone-200 bg-stone-50 p-4 transition-colors hover:bg-white"
                   >
-                    <p className="text-sm font-medium text-zinc-900">{thread.title}</p>
-                    <p className="mt-1 text-xs text-zinc-500">
+                    <p className="text-base font-semibold text-zinc-900">{thread.title}</p>
+                    <p className="mt-1 text-sm text-zinc-600">
                       {thread.author.name ?? "Member"} · {thread._count.posts} repl
                       {thread._count.posts === 1 ? "y" : "ies"}
                     </p>
-                    <p className="mt-2 text-xs text-zinc-400">Updated {formatDate(thread.updatedAt)}</p>
+                    <p className="mt-2 text-sm text-zinc-500">Updated {formatDate(thread.updatedAt)}</p>
                   </Link>
                 </li>
               ))}

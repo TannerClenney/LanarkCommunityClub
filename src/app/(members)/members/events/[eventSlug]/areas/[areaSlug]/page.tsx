@@ -112,28 +112,28 @@ export default async function EventAreaDetailPage({
       : "All tasks are currently covered. Check back or support another area.";
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3 text-sm">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-center gap-4 text-base">
         <Link href={`/members/events/${event.slug}`} className="font-medium text-green-700 hover:underline">
           ← Back to Event Hub
         </Link>
-        <Link href="/my-commitments" className="text-green-700 hover:underline">
+        <Link href="/my-commitments" className="font-medium text-green-700 hover:underline">
           My Commitments
         </Link>
-        <Link href="/dashboard" className="text-green-700 hover:underline">
+        <Link href="/dashboard" className="font-medium text-green-700 hover:underline">
           Dashboard
         </Link>
       </div>
 
       <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <p className="text-sm font-medium text-emerald-700">{event.title}</p>
+        <p className="text-base font-medium text-emerald-700">{event.title}</p>
         <h1 className="mt-1 text-2xl font-bold text-zinc-900">{area.name}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-700">{area.description}</p>
+        <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-700">{area.description}</p>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="mt-5 grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">Your role in this area</p>
-            <p className="mt-1 text-sm text-emerald-900">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Your role in this area</p>
+            <p className="mt-1.5 text-base text-emerald-900">
               {ownedByUser.length > 0
                 ? `You own ${ownedByUser.length} task${ownedByUser.length === 1 ? "" : "s"} in this area.`
                 : "You are not currently assigned in this area."}
@@ -141,12 +141,12 @@ export default async function EventAreaDetailPage({
           </div>
 
           <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Area summary</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Area summary</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-sm font-medium text-amber-800">
                 {openTasks.length} open
               </span>
-              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700">
                 {ownedTasks.length} owned
               </span>
             </div>
@@ -154,18 +154,18 @@ export default async function EventAreaDetailPage({
         </div>
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-zinc-900">What to do next</h2>
-            <p className="mt-1 text-sm text-zinc-600">{nextStepMessage}</p>
+            <h2 className="text-lg font-bold text-zinc-900">What to do next</h2>
+            <p className="mt-1 text-base text-zinc-600">{nextStepMessage}</p>
           </div>
-          <span className="rounded-full border border-stone-200 bg-stone-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
+          <span className="rounded-full border border-stone-200 bg-stone-100 px-2.5 py-1 text-sm font-medium text-zinc-600">
             Workflow loop
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-3 text-sm">
+        <div className="flex flex-wrap gap-4 text-base">
           <Link href={`/members/events/${event.slug}`} className="font-medium text-emerald-700 hover:underline">
             Back to Event Hub →
           </Link>
@@ -178,18 +178,18 @@ export default async function EventAreaDetailPage({
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="grid gap-8 lg:grid-cols-2">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
           {canCreateTask ? (
-            <details className="mb-4 rounded-lg" open={openTasks.length === 0 ? true : undefined}>
+            <details className="mb-5 rounded-lg" open={openTasks.length === 0 ? true : undefined}>
               <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-base font-semibold text-zinc-900">Open Tasks</h2>
+                  <h2 className="text-lg font-bold text-zinc-900">Open Tasks</h2>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100">
+                    <span className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-100">
                       Add Task
                     </span>
-                    <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                    <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-sm font-medium text-amber-800">
                       {openTasks.length} open
                     </span>
                   </div>
@@ -198,11 +198,11 @@ export default async function EventAreaDetailPage({
 
               <form
                 action={createAreaTask.bind(null, eventId!, areaId!, event.slug, area.slug)}
-                className="mt-4 rounded-lg border border-stone-200 bg-stone-50 p-4"
+                className="mt-5 rounded-lg border border-stone-200 bg-stone-50 p-5"
               >
-                <div className="grid gap-3">
+                <div className="grid gap-4">
                   <div>
-                    <label htmlFor="task-title" className="mb-1 block text-sm font-medium text-zinc-700">
+                    <label htmlFor="task-title" className="mb-1.5 block text-base font-medium text-zinc-800">
                       Title
                     </label>
                     <input
@@ -211,75 +211,75 @@ export default async function EventAreaDetailPage({
                       type="text"
                       required
                       placeholder="Add a quick task title"
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="task-description" className="mb-1 block text-sm font-medium text-zinc-700">
-                      Description <span className="text-zinc-400">(optional)</span>
+                    <label htmlFor="task-description" className="mb-1.5 block text-base font-medium text-zinc-800">
+                      Description <span className="text-zinc-500">(optional)</span>
                     </label>
                     <textarea
                       id="task-description"
                       name="description"
                       rows={3}
                       placeholder="Add a short note or next step"
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                     />
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid gap-4 sm:grid-cols-3">
                     <div>
-                      <label htmlFor="task-shiftDate" className="mb-1 block text-sm font-medium text-zinc-700">
-                        Date <span className="text-zinc-400">(optional)</span>
+                      <label htmlFor="task-shiftDate" className="mb-1.5 block text-base font-medium text-zinc-800">
+                        Date <span className="text-zinc-500">(optional)</span>
                       </label>
                       <input
                         id="task-shiftDate"
                         name="shiftDate"
                         type="date"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-zinc-900 focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                     </div>
                     <div>
-                      <label htmlFor="task-startClockTime" className="mb-1 block text-sm font-medium text-zinc-700">
-                        Start time <span className="text-zinc-400">(optional)</span>
+                      <label htmlFor="task-startClockTime" className="mb-1.5 block text-base font-medium text-zinc-800">
+                        Start time <span className="text-zinc-500">(optional)</span>
                       </label>
                       <input
                         id="task-startClockTime"
                         name="startClockTime"
                         type="time"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-zinc-900 focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                     </div>
                     <div>
-                      <label htmlFor="task-endClockTime" className="mb-1 block text-sm font-medium text-zinc-700">
-                        End time <span className="text-zinc-400">(optional)</span>
+                      <label htmlFor="task-endClockTime" className="mb-1.5 block text-base font-medium text-zinc-800">
+                        End time <span className="text-zinc-500">(optional)</span>
                       </label>
                       <input
                         id="task-endClockTime"
                         name="endClockTime"
                         type="time"
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                        className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base text-zinc-900 focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-4">
                     <button
                       type="submit"
-                      className="rounded-md bg-emerald-700 px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
+                      className="rounded-lg bg-emerald-700 px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-emerald-600"
                     >
                       Create Task
                     </button>
-                    <p className="text-xs text-zinc-500">New tasks are added as open and unassigned.</p>
+                    <p className="text-sm text-zinc-600">New tasks are added as open and unassigned.</p>
                   </div>
                 </div>
               </form>
             </details>
           ) : (
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-base font-semibold text-zinc-900">Open Tasks</h2>
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-bold text-zinc-900">Open Tasks</h2>
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-sm font-medium text-amber-800">
                 {openTasks.length} open
               </span>
             </div>
@@ -294,10 +294,10 @@ export default async function EventAreaDetailPage({
           />
         </section>
 
-        <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-zinc-900">Owned Tasks</h2>
-            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <h2 className="text-lg font-bold text-zinc-900">Owned Tasks</h2>
+            <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700">
               {ownedTasks.length} owned
             </span>
           </div>

@@ -39,7 +39,11 @@ function getStatusLabel(status: MemberTask["status"]) {
 }
 
 function getCurrentNeed(task: MemberTask) {
-  return task.description ?? `This ${task.areaName.toLowerCase()} item still needs someone to take the next practical step.`;
+  if (task.status === "owned") {
+    return task.ownerName ? `Covered by ${task.ownerName}.` : "This shift is covered.";
+  }
+
+  return `Open ${task.areaName.toLowerCase()} shift.`;
 }
 
 function readStoredOwners(): MockTaskOwnerMap {
@@ -108,65 +112,67 @@ function TaskQuickViewModal({
         className="absolute inset-0 bg-black/45"
       />
 
-      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-5 shadow-2xl">
+      <div className="relative z-10 w-full max-w-lg rounded-2xl border border-stone-200 bg-white p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Task</p>
-            <h3 className="mt-1 text-xl font-semibold text-zinc-900">{task.title}</h3>
+            <h3 className="mt-1 text-xl font-bold text-zinc-900">{task.title}</h3>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md border border-stone-200 px-2.5 py-1 text-sm text-zinc-500 hover:bg-stone-50"
+            className="rounded-md border border-stone-300 px-3 py-1.5 text-base font-medium text-zinc-700 hover:bg-stone-50"
           >
             Close
           </button>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Event</p>
-            <p className="mt-1 text-sm text-zinc-700">{task.eventTitle}</p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Event</p>
+            <p className="mt-1 text-base leading-relaxed text-zinc-800">{task.eventTitle}</p>
           </div>
 
-          <div className="rounded-lg border border-stone-200 bg-stone-50 p-3">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Area</p>
-            <p className="mt-1 text-sm text-zinc-700">{task.areaName}</p>
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Area</p>
+            <p className="mt-1 text-base leading-relaxed text-zinc-800">{task.areaName}</p>
           </div>
 
           {task.timeLabel && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 sm:col-span-2">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">When</p>
-              <p className="mt-1 text-sm font-medium text-amber-800">{task.timeLabel}</p>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 sm:col-span-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">When</p>
+              <p className="mt-1 text-lg font-bold tracking-tight text-amber-900">{task.timeLabel}</p>
             </div>
           )}
 
-          <div className="rounded-lg border border-stone-200 bg-stone-50 p-3 sm:col-span-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Current need</p>
-            <p className="mt-1 text-sm text-zinc-700">{getCurrentNeed(task)}</p>
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Current need</p>
+            <p className="mt-1 text-base leading-relaxed text-zinc-800">{getCurrentNeed(task)}</p>
           </div>
 
-          <div className="rounded-lg border border-stone-200 bg-stone-50 p-3 sm:col-span-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Next step</p>
-            <p className="mt-1 text-sm text-zinc-700">{task.description ?? "Open the area page to confirm the next follow-through step."}</p>
-          </div>
+          {task.description && (
+            <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 sm:col-span-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Next step</p>
+              <p className="mt-1 text-base leading-relaxed text-zinc-800">{task.description}</p>
+            </div>
+          )}
 
-          <div className="rounded-lg border border-stone-200 bg-stone-50 p-3 sm:col-span-2">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">Status</p>
-            <p className="mt-1 text-sm text-zinc-700">
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 sm:col-span-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">Status</p>
+            <p className="mt-1 text-base leading-relaxed text-zinc-800">
               {task.status === "owned" && task.ownerName ? `Owned by ${task.ownerName}` : "Up for grabs"}
             </p>
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           {task.status === "open" && (
             <button
               type="button"
               onClick={() => onTakeThis(task)}
               disabled={isPending}
-              className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-70"
+              className="min-h-11 w-full rounded-lg bg-emerald-700 px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
             >
               {isPending ? "Taking…" : "Take This Shift"}
             </button>
@@ -176,14 +182,14 @@ function TaskQuickViewModal({
             <Link
               href={areaHref}
               onClick={onClose}
-              className="rounded-md border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-stone-100"
+              className="min-h-11 w-full rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-base font-medium text-zinc-700 hover:bg-stone-100 sm:w-auto"
             >
               View Area
             </Link>
           ) : (
             <span
               aria-disabled="true"
-              className="cursor-not-allowed rounded-md border border-stone-200 bg-white px-3 py-2 text-sm font-medium text-zinc-400 opacity-70"
+              className="min-h-11 w-full cursor-not-allowed rounded-lg border border-stone-300 bg-white px-5 py-2.5 text-base font-medium text-zinc-400 opacity-70 sm:w-auto"
             >
               View Area
             </span>
@@ -210,47 +216,47 @@ function TaskCard({
   showAreaLink?: boolean;
 }) {
   return (
-    <li>
+    <li className="py-1">
       <button
         type="button"
         onClick={() => onOpenQuickView(task)}
-        className="block w-full rounded-lg border border-stone-200 bg-stone-50 p-3 text-left transition-all hover:border-emerald-300 hover:bg-white hover:shadow-sm"
+        className="block w-full cursor-pointer rounded-xl border border-stone-200 bg-stone-50 p-4 text-left transition-all hover:border-emerald-300 hover:bg-white hover:shadow-md"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-zinc-900">{task.title}</p>
+            <p className="text-base font-semibold leading-snug text-zinc-900 sm:text-lg">{task.title}</p>
             {task.timeLabel && (
-              <p className="mt-0.5 text-xs font-medium text-amber-700">
-                🕐 {task.timeLabel}
+              <p className="mt-1 text-sm font-bold tracking-tight text-amber-800 sm:text-base">
+                {task.timeLabel}
               </p>
             )}
             {showEventMeta && (
-              <p className="mt-1 text-xs text-zinc-500">
+              <p className="mt-1.5 text-sm text-zinc-600">
                 {task.eventTitle} · {task.areaName}
               </p>
             )}
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-1.5 text-sm text-zinc-600">
               {task.status === "owned" && task.ownerName ? `Owned by ${task.ownerName}` : "Up for grabs"}
             </p>
-            {task.description && <p className="mt-1 text-xs text-zinc-600">Next step: {task.description}</p>}
+            {task.description && <p className="mt-1.5 text-sm leading-relaxed text-zinc-700">{task.description}</p>}
           </div>
 
           {task.status !== "open" && (
-            <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${getStatusClasses(task.status)}`}>
+            <span className={`shrink-0 rounded-full border px-2.5 py-1 text-sm font-medium ${getStatusClasses(task.status)}`}>
               {getStatusLabel(task.status)}
             </span>
           )}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="mt-2 flex flex-wrap items-center gap-3">
           {task.status === "open" && (
-            <span className="text-xs font-medium text-zinc-500">
-              Tap for details
+            <span className="text-sm font-medium text-zinc-600">
+              Details
             </span>
           )}
 
           {showAreaLink && (
-            <span className="text-xs font-medium text-emerald-700">
+            <span className="text-sm font-medium text-emerald-700">
               View area →
             </span>
           )}
@@ -258,7 +264,7 @@ function TaskCard({
       </button>
 
       {task.status === "open" && (
-        <div className="mt-2 flex justify-start">
+        <div className="mt-4 flex justify-start">
           <button
             type="button"
             onClick={(event) => {
@@ -266,7 +272,7 @@ function TaskCard({
               onTakeThis(task);
             }}
             disabled={isPending}
-            className="rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70"
+            className="min-h-11 w-full rounded-lg bg-emerald-700 px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-emerald-600 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           >
             {isPending ? "Taking…" : "Take This Shift"}
           </button>
@@ -338,13 +344,13 @@ export function MockTaskList({
   const selectedTask = visibleTasks.find((task) => task.id === selectedTaskId) ?? null;
 
   if (visibleTasks.length === 0) {
-    return <p className="text-sm text-zinc-400">{emptyMessage}</p>;
+    return <p className="text-base text-zinc-500">{emptyMessage}</p>;
   }
 
   return (
-    <div className="space-y-3">
-      {errorMessage && <p className="text-sm text-red-600">{errorMessage}</p>}
-      <ul className="space-y-3">
+    <div className="space-y-5">
+      {errorMessage && <p className="text-base text-red-600">{errorMessage}</p>}
+      <ul className="space-y-5">
         {visibleTasks.map((task) => (
           <TaskCard
             key={task.id}
@@ -433,40 +439,40 @@ export function DashboardTaskOwnershipBoard({
     <>
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-800">Pick a Time to Help</h2>
-          <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+          <h2 className="text-lg font-bold text-zinc-900">Pick a Time to Help</h2>
+          <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-sm font-medium text-amber-800">
             Open
           </span>
         </div>
-        <p className="mb-4 text-xs text-zinc-500">Choose a shift that works for you.</p>
+        <p className="mb-4 text-sm text-zinc-600">Choose a shift and claim it fast.</p>
 
-        {errorMessage && <p className="mb-3 text-sm text-red-600">{errorMessage}</p>}
+        {errorMessage && <p className="mb-3 text-base text-red-600">{errorMessage}</p>}
         {recentlyTakenShiftLabel && (
-          <p className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">
+          <p className="mb-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-base font-medium text-emerald-800">
             You&apos;re helping {recentlyTakenShiftLabel} 👍
           </p>
         )}
         {normalizedNeeds.length === 0 ? (
-          <p className="text-sm text-zinc-400">Nothing needed right now — check back closer to event time.</p>
+          <p className="text-base text-zinc-500">Nothing needed right now — check back closer to event time.</p>
         ) : (
           <>
-            <div className="space-y-5">
+            <div className="space-y-6">
               {groupedNeeds.map((group) => (
                 <div key={group.label ?? "__no-time"}>
                   {group.label && (
-                    <div className="mb-3 rounded-lg border border-amber-100 bg-amber-50 px-3 py-2">
+                    <div className="mb-3 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-amber-900">🕐 {group.label}</p>
+                        <p className="text-base font-bold tracking-tight text-amber-900">{group.label}</p>
                         {group.tasks.length > 1 && (
-                          <p className="text-xs font-medium text-amber-700">{group.tasks.length} tasks</p>
+                          <p className="text-sm font-medium text-amber-800">{group.tasks.length} tasks</p>
                         )}
                       </div>
                       {group.tasks.length > 1 && (
-                        <p className="mt-1 text-xs text-amber-600">This time slot needs help</p>
+                        <p className="mt-1 text-sm text-amber-700">Needs help</p>
                       )}
                     </div>
                   )}
-                  <ul className="space-y-3">
+                  <ul className="space-y-5">
                     {group.tasks.map((task) => (
                       <TaskCard
                         key={task.id}
@@ -488,7 +494,7 @@ export function DashboardTaskOwnershipBoard({
             </div>
             {normalizedNeeds.length > 4 && (
               <p className="mt-3 text-center">
-                <Link href="/my-commitments" className="text-xs font-medium text-emerald-700 hover:underline">
+                <Link href="/my-commitments" className="text-sm font-medium text-emerald-700 hover:underline">
                   See more →
                 </Link>
               </p>
@@ -499,17 +505,17 @@ export function DashboardTaskOwnershipBoard({
 
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-800">You&apos;ve Got These Covered</h2>
-          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+          <h2 className="text-lg font-bold text-zinc-900">You&apos;ve Got These Covered</h2>
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-sm font-medium text-emerald-700">
             You
           </span>
         </div>
-        <p className="mb-4 text-xs text-zinc-500">Nice work staying on top of these.</p>
+        <p className="mb-4 text-sm text-zinc-600">Nice work staying on top of these.</p>
 
         {normalizedOwned.length === 0 ? (
-          <p className="text-sm text-zinc-400">You haven&apos;t picked anything up yet — no rush.</p>
+          <p className="text-base text-zinc-500">You haven&apos;t picked anything up yet — no rush.</p>
         ) : (
-          <ul className="space-y-3">
+          <ul className="space-y-4">
             {normalizedOwned.map((task) => (
               <TaskCard
                 key={task.id}

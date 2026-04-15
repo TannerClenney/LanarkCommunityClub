@@ -11,7 +11,7 @@ import {
 } from "@/lib/member-hub";
 import { formatDateShort } from "@/lib/utils";
 
-import { formatTimeRange } from "@/lib/utils";
+import { formatCompactShiftRange } from "@/lib/utils";
 
 const OSD_EVENT_SLUG = "old-settlers-days";
 
@@ -457,7 +457,7 @@ type DbTaskRecord = {
 
 function deriveTimeLabel(task: { startTime?: Date | null; endTime?: Date | null; description: string | null }): string | null {
   if (task.startTime && task.endTime) {
-    return formatTimeRange(task.startTime, task.endTime);
+    return formatCompactShiftRange(task.startTime, task.endTime);
   }
   const parsed = parseTimeLabel(task.description);
   return parsed.timeLabel;
