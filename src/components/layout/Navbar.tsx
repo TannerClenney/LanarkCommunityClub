@@ -10,6 +10,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isOfficer = isBoardOrAdminRole(session?.user?.role);
+  const membersHref = session ? "/dashboard" : "/login";
 
   return (
     <nav className="border-b border-green-700/70 bg-green-800 text-white shadow-sm">
@@ -34,13 +35,13 @@ export default function Navbar() {
           <Link href="/scholarships" className="hover:text-green-200 transition-colors">Scholarships</Link>
           <Link href="/gallery" className="hover:text-green-200 transition-colors">Gallery</Link>
           <Link href="/contact" className="hover:text-green-200 transition-colors">Contact</Link>
+          <Link href={membersHref} className="hover:text-green-200 transition-colors">Members</Link>
           <Link href="/donate" className="bg-yellow-500 text-green-900 px-4 py-1 rounded-full font-bold hover:bg-yellow-400 transition-colors">
             Donate
           </Link>
 
           {session ? (
             <>
-              <Link href="/dashboard" className="hover:text-green-200 transition-colors">Members</Link>
               {isOfficer && (
                 <Link href="/admin" className="hover:text-green-200 transition-colors">Admin</Link>
               )}
@@ -79,10 +80,10 @@ export default function Navbar() {
           <Link href="/scholarships" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Scholarships</Link>
           <Link href="/gallery" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Gallery</Link>
           <Link href="/contact" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Contact</Link>
+          <Link href={membersHref} onClick={() => setMenuOpen(false)} className="hover:text-green-200">Members</Link>
           <Link href="/donate" onClick={() => setMenuOpen(false)} className="hover:text-green-200 font-bold text-yellow-400">Donate</Link>
           {session ? (
             <>
-              <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Members Area</Link>
               {isOfficer && (
                 <Link href="/admin" onClick={() => setMenuOpen(false)} className="hover:text-green-200">Admin</Link>
               )}
