@@ -14,6 +14,12 @@ export async function proxy(req: NextRequest) {
     secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   });
 
+  console.error("[auth] Proxy token check", {
+    pathname: nextUrl.pathname,
+    hasToken: Boolean(token),
+    role: token?.role ?? null,
+  });
+
   const isLoggedIn = !!token;
   const role = token?.role as string | undefined;
 
