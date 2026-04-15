@@ -75,17 +75,45 @@ export async function createAreaTask(
   const rawDescription = typeof formData.get("description") === "string" ? String(formData.get("description")) : "";
   const parsedDescription = TaskDescriptionSchema.safeParse(rawDescription.length > 0 ? rawDescription : undefined);
 
-  const rawStartTime = typeof formData.get("startTime") === "string" ? String(formData.get("startTime")) : "";
-  const rawEndTime = typeof formData.get("endTime") === "string" ? String(formData.get("endTime")) : "";
-  const parsedStartTime = rawStartTime ? TaskDateTimeSchema.safeParse(rawStartTime) : undefined;
-  const parsedEndTime = rawEndTime ? TaskDateTimeSchema.safeParse(rawEndTime) : undefined;
+  // Read separate date + time fields and combine into Date values
+  const rawShiftDate = typeof formData.get("shiftDate") === "string" ? String(formData.get("shiftDate")).trim() : "";
+  const rawStartClock = typeof formData.get("startClockTime") === "string" ? String(formData.get("startClockTime")).trim() : "";
+  const rawEndClock = typeof formData.get("endClockTime") === "string" ? String(formData.get("endClockTime")).trim() : "";
 
-  if (!parsedEventId.success || !parsedAreaId.success || !parsedTitle.success || !parsedDescription.success) {
-    return;
+  let startTime: Date | null = null;
+  let endTime: Date | null = null;
+
+  if (rawShiftDate && /^\d{4}-\d{2}-\d{2}$/.test(rawShiftDate)) {
+    if (rawStartClock && /^\d{2}:\d{2}$/.test(rawStartClock)) {
+      const parsed = new Date(`${rawShiftDate}T${rawStartClock}:00`);
+      if (!Number.isNaN(parsed.getTime())) startTime = parsed;
+    }
+    if (rawEndClock && /^\d{2}:\d{2}$/.test(rawEndClock)) {
+      const parsed = new Date(`${rawShiftDate}T${rawEndClock}:00`);
+      if (!Number.isNaN(parsed.getTime())) endTime = parsed;
+    }
   }
 
-  if (parsedStartTime && !parsedStartTime.success) return;
-  if (parsedEndTime && !parsedEndTime.success) return;
+  // [DIAG] trace submitted form values
+  console.log("[createAreaTask] raw form →", {
+    title: formData.get("title"),
+    description: formData.get("description"),
+    shiftDate: rawShiftDate || "(empty)",
+    startClock: rawStartClock || "(empty)",
+    endClock: rawEndClock || "(empty)",
+    startTime,
+    endTime,
+  });
+
+  if (!parsedEventId.success || !parsedAreaId.success || !parsedTitle.success || !parsedDescription.success) {
+    console.log("[createAreaTask] validation failed →", {
+      eventId: parsedEventId.success,
+      areaId: parsedAreaId.success,
+      title: parsedTitle.success,
+      description: parsedDescription.success,
+    });
+    return;
+  }
 
   const area = await db.eventArea.findFirst({
     where: {
@@ -97,6 +125,7 @@ export async function createAreaTask(
   });
 
   if (!area) {
+    console.log("[createAreaTask] area not found for", { eventId: parsedEventId.data, areaId: parsedAreaId.data });
     return;
   }
 
@@ -105,21 +134,24 @@ export async function createAreaTask(
     _max: { displayOrder: true },
   });
 
+  const createPayload = {
+    eventId: parsedEventId.data,
+    eventAreaId: area.id,
+    title: parsedTitle.data,
+    description: parsedDescription.data ?? null,
+    status: TaskStatus.OPEN,
+    ownerId: null,
+    displayOrder: (currentOrder._max.displayOrder ?? -1) + 1,
+    startTime,
+    endTime,
+  };
+  console.log("[createAreaTask] prisma create payload →", createPayload);
+
   try {
-    await db.task.create({
-      data: {
-        eventId: parsedEventId.data,
-        eventAreaId: area.id,
-        title: parsedTitle.data,
-        description: parsedDescription.data ?? null,
-        status: TaskStatus.OPEN,
-        ownerId: null,
-        displayOrder: (currentOrder._max.displayOrder ?? -1) + 1,
-        startTime: parsedStartTime?.data ?? null,
-        endTime: parsedEndTime?.data ?? null,
-      },
-    });
-  } catch {
+    const created = await db.task.create({ data: createPayload });
+    console.log("[createAreaTask] task created ✓", created.id);
+  } catch (err) {
+    console.error("[createAreaTask] prisma create FAILED →", err);
     return;
   }
 

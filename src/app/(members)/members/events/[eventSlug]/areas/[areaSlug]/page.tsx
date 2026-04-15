@@ -228,26 +228,37 @@ export default async function EventAreaDetailPage({
                     />
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="grid gap-3 sm:grid-cols-3">
                     <div>
-                      <label htmlFor="task-startTime" className="mb-1 block text-sm font-medium text-zinc-700">
-                        Start time <span className="text-zinc-400">(optional)</span>
+                      <label htmlFor="task-shiftDate" className="mb-1 block text-sm font-medium text-zinc-700">
+                        Date <span className="text-zinc-400">(optional)</span>
                       </label>
                       <input
-                        id="task-startTime"
-                        name="startTime"
-                        type="datetime-local"
+                        id="task-shiftDate"
+                        name="shiftDate"
+                        type="date"
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                     </div>
                     <div>
-                      <label htmlFor="task-endTime" className="mb-1 block text-sm font-medium text-zinc-700">
+                      <label htmlFor="task-startClockTime" className="mb-1 block text-sm font-medium text-zinc-700">
+                        Start time <span className="text-zinc-400">(optional)</span>
+                      </label>
+                      <input
+                        id="task-startClockTime"
+                        name="startClockTime"
+                        type="time"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="task-endClockTime" className="mb-1 block text-sm font-medium text-zinc-700">
                         End time <span className="text-zinc-400">(optional)</span>
                       </label>
                       <input
-                        id="task-endTime"
-                        name="endTime"
-                        type="datetime-local"
+                        id="task-endClockTime"
+                        name="endClockTime"
+                        type="time"
                         className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
                       />
                     </div>
