@@ -43,9 +43,7 @@ export default function ContactPage() {
           <div>
             <h2 className="font-semibold text-gray-800 mb-2">Membership</h2>
             <p className="text-gray-600 text-sm">
-              Interested in joining the LCC?{" "}
-              <a href="/register" className="text-green-700 underline">Create an account</a>{" "}
-              and a club officer will approve your membership.
+              Interested in joining the LCC? Membership is invite-only. Please contact the club for access.
             </p>
           </div>
         </div>
