@@ -23,6 +23,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await auth().catch((err) => {
+    console.error(
+      "[auth] Root layout failed to resolve session:",
+      err instanceof Error ? err.message : err
+    );
     if (process.env.NODE_ENV !== "production") {
       console.warn("[auth] Session unavailable – database may not be configured:", err instanceof Error ? err.message : err);
     }
