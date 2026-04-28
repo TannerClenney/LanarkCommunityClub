@@ -53,6 +53,46 @@ const eventContent: Record<string, { highlights: string[] }> = {
   },
 };
 
+const eventLineups: Record<
+  string,
+  Array<{
+    day: string;
+    acts: Array<{
+      name: string;
+      time: string;
+      image: string;
+    }>;
+  }>
+> = {
+  "old-settlers-days": [
+    {
+      day: "Friday",
+      acts: [
+        {
+          name: "Three on the Tree",
+          time: "7 PM – 11 PM",
+          image: "/images/events/friday-three-on-the-tree.png",
+        },
+      ],
+    },
+    {
+      day: "Saturday",
+      acts: [
+        {
+          name: "Charlie Rae",
+          time: "3 PM – 5 PM",
+          image: "/images/events/saturday-charlie-rae.png",
+        },
+        {
+          name: "The Beaux",
+          time: "7 PM – 11 PM",
+          image: "/images/events/saturday-the-beaux.png",
+        },
+      ],
+    },
+  ],
+};
+
 const genericHighlights = [
   "A welcoming community atmosphere",
   "Food, music, and activities to enjoy",
@@ -114,6 +154,7 @@ export default async function PublicEventDetailPage({
   const heroImage = getEventHeroImage(event);
   const dateLabel = formatEventDateRange(event);
   const highlights = eventContent[event.slug]?.highlights ?? genericHighlights;
+  const lineup = eventLineups[event.slug];
 
   return (
     <main className="bg-stone-50 py-10 text-zinc-800">
@@ -168,6 +209,42 @@ export default async function PublicEventDetailPage({
             ))}
           </div>
         </section>
+
+        {lineup ? (
+          <section className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
+            <div className="mb-5">
+              <h2 className="text-2xl font-semibold tracking-tight text-emerald-800">Entertainment Lineup</h2>
+              <p className="mt-1 text-sm text-zinc-600">Live music and featured acts throughout the weekend.</p>
+            </div>
+
+            <div className="space-y-6">
+              {lineup.map((day) => (
+                <div key={day.day}>
+                  <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-emerald-700">{day.day}</h3>
+                  <div className={`grid gap-4 ${day.acts.length > 1 ? "md:grid-cols-2" : "grid-cols-1"}`}>
+                    {day.acts.map((act) => (
+                      <article key={act.name} className="rounded-xl border border-stone-200 bg-white p-3 shadow-sm">
+                        <div className="relative aspect-[4/5] overflow-hidden rounded-lg border border-emerald-100 bg-stone-100">
+                          <Image
+                            src={act.image}
+                            alt={`${act.name} poster`}
+                            fill
+                            sizes="(min-width: 768px) 50vw, 100vw"
+                            className="object-contain object-center p-2"
+                          />
+                        </div>
+                        <p className="mt-3 text-sm font-semibold text-zinc-900">{act.name}</p>
+                        <p className="text-sm text-zinc-600">
+                          {day.day}, {act.time}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
