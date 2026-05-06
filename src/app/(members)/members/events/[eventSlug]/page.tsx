@@ -93,6 +93,14 @@ function getAreaSupportSummary(area: { tasks: Array<{ status: string }> }) {
   return openCount > 0 ? "Could use a few extra hands" : "In good shape";
 }
 
+function getAreaDisplayName(area: { slug: string; name: string }, eventSlug: string) {
+  if (eventSlug === "old-settlers-days" && area.slug === "parade-stage") {
+    return "Parade";
+  }
+
+  return area.name;
+}
+
 async function getEventPageData(eventSlug: string) {
   await connection();
 
@@ -254,7 +262,7 @@ export default async function MemberEventDetailPage({
                 href={`/members/events/${hubEvent.slug}/areas/${area.slug}`}
                 className="rounded-xl border border-stone-200 bg-stone-50 p-4 transition-all hover:border-emerald-300 hover:bg-white hover:shadow-sm"
               >
-                <h3 className="text-sm font-semibold text-zinc-900">{area.name}</h3>
+                <h3 className="text-sm font-semibold text-zinc-900">{getAreaDisplayName(area, eventSlug)}</h3>
                 <p className="mt-2 text-sm text-zinc-600">Lead: {getAreaLead(area, eventSlug)}</p>
                 <p className="mt-1 text-sm text-zinc-600">When this matters: {getAreaTimeLabel(area, hubEvent.dateLabel, eventSlug)}</p>
                 <p className="mt-1 text-sm font-medium text-emerald-700">{getAreaSupportSummary(area)}</p>

@@ -4,14 +4,86 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { MockTaskList } from "@/components/ui/MockTaskOwnership";
 import { db } from "@/lib/db";
-import { createAreaTask } from "@/app/actions/member-hub";
+import { createAreaTask, takeTaskOwnership } from "@/app/actions/member-hub";
 import {
   getFallbackMemberEvents,
   getMemberArea,
   getMemberHubEvent,
   memberHubEvents,
 } from "@/lib/member-hub";
-import { buildMemberHubEventFromDatabase, ensureMemberHubEventData, isSeededMemberHubEventSlug } from "@/lib/member-hub-server";
+import { buildMemberHubEventFromDatabase, ensureMemberHubEventData, isSeededMemberHubEventSlug, OSD_EVENT_SLUG, getCanonicalOsdAreaSlug } from "@/lib/member-hub-server";
+
+type CoverageBlock = {
+  groupKey: string;
+  title: string;
+  timeLabel: string | null;
+  description: string | null;
+  tasks: Array<{
+    id: string;
+    title: string;
+    timeLabel: string | null;
+    description: string | null;
+    status: string;
+    ownerId: string | null;
+    ownerName: string | null;
+  }>;
+};
+
+function startsWithActionVerb(title: string): boolean {
+  const actionVerbs = ['confirm', 'refresh', 'check', 'share', 'coordinate', 'help', 'staff'];
+  const lowerTitle = title.toLowerCase().trim();
+  return actionVerbs.some(verb => lowerTitle.startsWith(verb));
+}
+
+function buildCoverageBlocks(tasks: Array<{
+  id: string;
+  title: string;
+  timeLabel: string | null;
+  description: string | null;
+  status: string;
+  ownerId: string | null;
+  ownerName: string | null;
+}>): CoverageBlock[] {
+  if (tasks.length === 0) return [];
+
+  // Group by (title + timeLabel) to create meaningful shift blocks
+  const grouped = new Map<string, typeof tasks>();
+
+  for (const task of tasks) {
+    const titleNorm = task.title.toLowerCase().trim();
+    const timeNorm = task.timeLabel?.toLowerCase().trim() || "unscheduled";
+    const key = `${titleNorm}|${timeNorm}`;
+
+    if (!grouped.has(key)) {
+      grouped.set(key, []);
+    }
+    grouped.get(key)!.push(task);
+  }
+
+  // Convert groups to coverage blocks
+  const blocks: CoverageBlock[] = [];
+
+  for (const [groupKey, groupTasks] of grouped) {
+    const firstTask = groupTasks[0];
+    const timeLabel = firstTask.timeLabel && firstTask.timeLabel.length > 0 ? firstTask.timeLabel : null;
+
+    // Collect non-empty descriptions
+    const descriptions = groupTasks
+      .map((t) => t.description)
+      .filter((d) => d && d.length > 0);
+    const description = descriptions.length > 0 ? descriptions[0] : null;
+
+    blocks.push({
+      groupKey,
+      title: firstTask.title,
+      timeLabel,
+      description,
+      tasks: groupTasks,
+    });
+  }
+
+  return blocks;
+}
 
 async function getAreaPageData(eventSlug: string, areaSlug: string) {
   await connection();
@@ -41,11 +113,21 @@ async function getAreaPageData(eventSlug: string, areaSlug: string) {
     notFound();
   }
 
-  const dbArea = dbEvent
-    ? await db.eventArea.findFirst({
+  // For OSD events, support legacy slug redirection
+  let lookupSlug = areaSlug;
+  if (eventSlug === OSD_EVENT_SLUG) {
+    const canonicalSlug = getCanonicalOsdAreaSlug(areaSlug);
+    if (!canonicalSlug) {
+      notFound();
+    }
+    lookupSlug = canonicalSlug;
+  }
+
+  // Fetch all areas for proper normalization
+  const dbAreas = dbEvent
+    ? await db.eventArea.findMany({
         where: {
           eventId: dbEvent.id,
-          slug: areaSlug,
         },
         include: {
           tasks: {
@@ -57,15 +139,14 @@ async function getAreaPageData(eventSlug: string, areaSlug: string) {
           },
         },
       })
-    : null;
+    : [];
 
   const event =
-    dbEvent && dbArea
-      ? buildMemberHubEventFromDatabase(dbEvent, [dbArea])
+    dbEvent && dbAreas.length > 0
+      ? buildMemberHubEventFromDatabase(dbEvent, dbAreas)
       : getMemberHubEvent(eventSlug, fallbackPreview ?? undefined);
-  const area = dbArea
-    ? event.areas[0] ?? null
-    : getMemberArea(eventSlug, areaSlug, fallbackPreview ?? undefined);
+  
+  const area = event.areas.find((a) => a.slug === lookupSlug) ?? (fallbackPreview ? getMemberArea(eventSlug, lookupSlug, fallbackPreview) : null);
 
   if (!area) {
     notFound();
@@ -75,7 +156,7 @@ async function getAreaPageData(eventSlug: string, areaSlug: string) {
     event,
     area,
     eventId: dbEvent?.id ?? null,
-    areaId: dbArea?.id ?? null,
+    areaId: dbAreas.find((a) => a.slug === lookupSlug)?.id ?? null,
   };
 }
 
@@ -278,20 +359,63 @@ export default async function EventAreaDetailPage({
             </details>
           ) : (
             <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-bold text-zinc-900">Open Tasks</h2>
+              <h2 className="text-lg font-bold text-zinc-900">Ways to Help</h2>
               <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-sm font-medium text-amber-800">
                 {openTasks.length} open
               </span>
             </div>
           )}
 
-          <MockTaskList
-            tasks={openTasks}
-            currentUserName={currentUserName}
-            emptyMessage="No open tasks in this area right now."
-            showEventMeta={false}
-            showAreaLink={false}
-          />
+          {openTasks.length === 0 ? (
+            <div className="rounded-lg border border-stone-200 bg-stone-50 p-6 text-center">
+              <p className="text-base text-zinc-600">
+                No open spots right now.
+                <br />
+                <span className="text-sm text-zinc-500">Check back later or help with another area.</span>
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {buildCoverageBlocks(openTasks).map((block) => {
+                const displayTitle = startsWithActionVerb(block.title)
+                  ? block.title
+                  : `Help with ${block.title}`;
+                return (
+                <div key={block.groupKey} className="rounded-lg border border-amber-100 bg-amber-50 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="text-base font-semibold text-amber-900">
+                        {displayTitle}
+                      </p>
+                      {block.timeLabel && (
+                        <p className="mt-1 text-sm text-amber-700">{block.timeLabel}</p>
+                      )}
+                      {block.description && (
+                        <p className="mt-1 text-sm text-amber-700">{block.description}</p>
+                      )}
+                      {block.tasks.length > 1 && (
+                        <p className="mt-2 text-xs font-medium text-amber-600">
+                          ({block.tasks.length} {block.tasks.length === 1 ? "role" : "roles"} in this shift)
+                        </p>
+                      )}
+                    </div>
+                    <form
+                      action={takeTaskOwnership.bind(null, block.tasks[0].id)}
+                      className="shrink-0"
+                    >
+                      <button
+                        type="submit"
+                        className="inline-block rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
+                      >
+                        I can help
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              );
+              })}
+            </div>
+          )}
         </section>
 
         <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">

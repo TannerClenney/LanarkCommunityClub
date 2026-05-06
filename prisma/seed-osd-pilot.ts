@@ -66,9 +66,21 @@ const areaSeeds: PilotAreaSeed[] = [
     displayOrder: 1,
     tasks: [
       {
-        title: "Confirm beer tent restock plan for Saturday",
-        description: "Write down the simple restock handoff so volunteers know what to watch.",
+        title: "Help bartend Friday",
+        description: "[time:Friday, 3:00 PM-11:00 PM] Bartend the main shift, keep service moving, and coordinate quick cooler checks.",
         displayOrder: 0,
+        status: TaskStatus.OPEN,
+      },
+      {
+        title: "Help bartend Saturday daytime",
+        description: "[time:Saturday, 10:00 AM-5:00 PM] Cover daytime bartending and keep lines steady through afternoon traffic.",
+        displayOrder: 1,
+        status: TaskStatus.OPEN,
+      },
+      {
+        title: "Help bartend Saturday evening",
+        description: "[time:Saturday, 5:00 PM-11:00 PM] Cover evening bartending and help close up the beer tent at shift end.",
+        displayOrder: 2,
         status: TaskStatus.OPEN,
       },
     ],
@@ -88,7 +100,7 @@ const areaSeeds: PilotAreaSeed[] = [
     tasks: [],
   },
   {
-    name: "Parade & Stage",
+    name: "Parade",
     slug: "parade-stage",
     description: "Parade lineup, timing windows, and stage handoff flow.",
     displayOrder: 4,

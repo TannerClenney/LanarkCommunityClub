@@ -13,7 +13,7 @@ import { formatDateShort } from "@/lib/utils";
 
 import { formatCompactShiftRange } from "@/lib/utils";
 
-const OSD_EVENT_SLUG = "old-settlers-days";
+export const OSD_EVENT_SLUG = "old-settlers-days";
 
 type EventAreaSeed = {
   name: string;
@@ -58,9 +58,21 @@ const OSD_AREA_SEEDS: EventAreaSeed[] = [
     displayOrder: 1,
     tasks: [
       {
-        title: "Confirm beer tent restock plan for Saturday",
-        description: "[time:Saturday, 1:00–2:00 PM] Write down the simple restock handoff so volunteers know what to watch.",
+        title: "Help bartend Friday",
+        description: "[time:Friday, 3:00 PM-11:00 PM] Bartend the main shift, keep service moving, and coordinate quick cooler checks.",
         displayOrder: 0,
+        status: TaskStatus.OPEN,
+      },
+      {
+        title: "Help bartend Saturday daytime",
+        description: "[time:Saturday, 10:00 AM-5:00 PM] Cover daytime bartending and keep lines steady through afternoon traffic.",
+        displayOrder: 1,
+        status: TaskStatus.OPEN,
+      },
+      {
+        title: "Help bartend Saturday evening",
+        description: "[time:Saturday, 5:00 PM-11:00 PM] Cover evening bartending and help close up the beer tent at shift end.",
+        displayOrder: 2,
         status: TaskStatus.OPEN,
       },
     ],
@@ -80,7 +92,7 @@ const OSD_AREA_SEEDS: EventAreaSeed[] = [
     tasks: [],
   },
   {
-    name: "Parade & Stage",
+    name: "Parade",
     slug: "parade-stage",
     description: "Parade lineup, timing windows, and stage handoff flow.",
     displayOrder: 4,
@@ -556,6 +568,16 @@ const OSD_LEGACY_AREA_MAP: Record<string, (typeof OSD_FINAL_AREA_ORDER)[number]>
   logistics: "raffle-licensing",
 };
 
+const OSD_DEPRECATED_TASK_TITLES = new Set([
+  "confirm beer tent restock plan for saturday",
+  "write down the cooler restock plan for saturday",
+  "check cups, wristband stamp, and serving table setup",
+]);
+
+function stripDeprecatedOsdTasks(tasks: DbAreaRecord["tasks"]): DbAreaRecord["tasks"] {
+  return tasks.filter((task) => !OSD_DEPRECATED_TASK_TITLES.has(task.title.trim().toLowerCase()));
+}
+
 function mergeUniqueTasksByTitle(
   existingTasks: DbAreaRecord["tasks"],
   incomingTasks: DbAreaRecord["tasks"],
@@ -590,13 +612,14 @@ function normalizeOsdAreas(areas: DbAreaRecord[]): DbAreaRecord[] {
       mergedBySlug.set(canonicalSlug, {
         ...area,
         slug: canonicalSlug,
+        tasks: stripDeprecatedOsdTasks(area.tasks),
       });
       continue;
     }
 
     mergedBySlug.set(canonicalSlug, {
       ...existing,
-      tasks: mergeUniqueTasksByTitle(existing.tasks, area.tasks),
+      tasks: stripDeprecatedOsdTasks(mergeUniqueTasksByTitle(existing.tasks, area.tasks)),
     });
   }
 
@@ -604,6 +627,20 @@ function normalizeOsdAreas(areas: DbAreaRecord[]): DbAreaRecord[] {
     const area = mergedBySlug.get(slug);
     return area ? [area] : [];
   });
+}
+
+/**
+ * Helper function to find or redirect to an OSD area by slug.
+ * Supports legacy slug mapping (entrance -> tent-setup, logistics -> raffle-licensing).
+ * Returns the canonical slug or null if not found.
+ */
+export function getCanonicalOsdAreaSlug(requestedSlug: string): string | null {
+  // Direct match
+  if (OSD_FINAL_AREA_ORDER.includes(requestedSlug as (typeof OSD_FINAL_AREA_ORDER)[number])) {
+    return requestedSlug;
+  }
+  // Legacy slug mapping
+  return OSD_LEGACY_AREA_MAP[requestedSlug] ?? null;
 }
 
 export function buildMemberHubEventFromDatabase(event: DbEventRecord, areas: DbAreaRecord[]): MemberHubEvent {
