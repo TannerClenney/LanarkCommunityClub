@@ -65,6 +65,26 @@ async function getPublicEvents() {
 
 type PublicEvent = Awaited<ReturnType<typeof getPublicEvents>>[number];
 
+const OSD_PUBLIC_TITLE = "Old Settlers Days";
+const OSD_PUBLIC_FEATURED_DESCRIPTION =
+  "Lanark's community celebration returns June 26–28 with food vendors, craft booths, kids' activities, live music, and community fun at Lanark City Park.";
+const OSD_PUBLIC_CARD_DESCRIPTION =
+  "A weekend community celebration with food, vendors, kids' activities, live music, and fun for all ages.";
+
+function getHomepageEventCopy(event: PublicEvent, variant: "featured" | "card") {
+  if (event.slug !== "old-settlers-days") {
+    return {
+      title: event.title,
+      description: event.description,
+    };
+  }
+
+  return {
+    title: OSD_PUBLIC_TITLE,
+    description: variant === "featured" ? OSD_PUBLIC_FEATURED_DESCRIPTION : OSD_PUBLIC_CARD_DESCRIPTION,
+  };
+}
+
 function formatEventDateRange(event: Pick<PublicEvent, "startDate" | "endDate">) {
   return event.endDate
     ? `${formatDateShort(event.startDate)} – ${formatDateShort(event.endDate)}`
@@ -109,6 +129,7 @@ export default async function HomePage() {
     .slice(0, 3);
 
   const featuredImage = featuredEvent ? getEventImage(featuredEvent) : null;
+  const featuredCopy = featuredEvent ? getHomepageEventCopy(featuredEvent, "featured") : null;
 
   return (
     <main className="w-full bg-stone-50 text-zinc-900">
@@ -170,9 +191,9 @@ export default async function HomePage() {
               </div>
 
               <div className="flex flex-col justify-center">
-                <h3 className="text-2xl font-semibold text-zinc-900">{featuredEvent.title}</h3>
+                <h3 className="text-2xl font-semibold text-zinc-900">{featuredCopy?.title ?? featuredEvent.title}</h3>
                 <p className="mt-2 text-sm font-semibold text-emerald-700">{formatEventDateRange(featuredEvent)}</p>
-                <p className="mt-3 text-sm leading-6 text-zinc-700">{featuredEvent.description}</p>
+                <p className="mt-3 text-sm leading-6 text-zinc-700">{featuredCopy?.description ?? featuredEvent.description}</p>
                 <div className="mt-5">
                   <Link
                     href={`/events/${featuredEvent.slug}`}
@@ -202,16 +223,20 @@ export default async function HomePage() {
             </p>
           ) : (
             <div className="grid gap-4 md:grid-cols-3">
-              {eventPreviews.map((event) => (
+              {eventPreviews.map((event) => {
+                const eventCopy = getHomepageEventCopy(event, "card");
+
+                return (
                 <article key={event.id} className="rounded-xl border border-stone-200 bg-stone-50 p-4">
-                  <h3 className="text-base font-semibold text-zinc-900">{event.title}</h3>
+                  <h3 className="text-base font-semibold text-zinc-900">{eventCopy.title}</h3>
                   <p className="mt-1 text-xs font-semibold text-emerald-700">{formatEventDateRange(event)}</p>
-                  <p className="mt-2 line-clamp-3 text-sm text-zinc-700">{event.description}</p>
+                  <p className="mt-2 line-clamp-3 text-sm text-zinc-700">{eventCopy.description}</p>
                   <Link href={`/events/${event.slug}`} className="mt-3 inline-block text-sm font-medium text-emerald-700 hover:underline">
                     Learn more →
                   </Link>
                 </article>
-              ))}
+              );
+              })}
             </div>
           )}
         </div>
