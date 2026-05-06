@@ -36,6 +36,63 @@ function getEventDetailImage(event: { slug: string; title: string; isFeatured?: 
   return null;
 }
 
+// Temporary Phase 1.5 overrides for OSD only.
+// This lets us validate real-world coordination copy before adding formal schema fields.
+// Temporary Phase 2 OSD overrides — exact slug keys, one entry per area.
+// Replace with schema fields once the area structure is confirmed stable.
+const OSD_AREA_LEADS: Record<string, string> = {
+  "tent-setup": "Lynn Landherr",
+  "beer-service": "Kevin",
+  "tickets-money": "Randy",
+  entertainment: "Jason",
+  "parade-stage": 'Tim "Snake"',
+  "raffle-licensing": "Tanner Clenney",
+  "food-pork-chop": "Scott (with Lynn involved)",
+};
+
+const OSD_AREA_TIMES: Record<string, string> = {
+  "tent-setup": "Wednesday setup through opening shifts",
+  "beer-service": "Friday warm-up and Saturday night rush",
+  "tickets-money": "Peak sales windows and nightly closeout",
+  entertainment: "Friday night and Saturday stage windows",
+  "parade-stage": "Parade timing and stage transitions",
+  "raffle-licensing": "Pre-event confirmations through weekend closeout",
+  "food-pork-chop": "Friday prep and Saturday meal rush",
+};
+
+function findAreaOverride(overrides: Record<string, string>, area: { slug: string }): string | null {
+  return overrides[area.slug] ?? null;
+}
+
+function getAreaLead(area: { slug: string; name: string; tasks: Array<{ ownerName?: string | null }> }, eventSlug: string) {
+  if (eventSlug === "old-settlers-days") {
+    const overrideLead = findAreaOverride(OSD_AREA_LEADS, area);
+    if (overrideLead) return overrideLead;
+  }
+
+  const lead = area.tasks.find((task) => task.ownerName?.trim())?.ownerName?.trim();
+  return lead || "Needs lead";
+}
+
+function getAreaTimeLabel(
+  area: { slug: string; name: string; tasks: Array<{ timeLabel?: string | null }> },
+  fallbackLabel: string,
+  eventSlug: string,
+) {
+  if (eventSlug === "old-settlers-days") {
+    const overrideTime = findAreaOverride(OSD_AREA_TIMES, area);
+    if (overrideTime) return overrideTime;
+  }
+
+  const timeLabel = area.tasks.find((task) => task.timeLabel?.trim())?.timeLabel?.trim();
+  return timeLabel || fallbackLabel || "During event";
+}
+
+function getAreaSupportSummary(area: { tasks: Array<{ status: string }> }) {
+  const openCount = area.tasks.filter((task) => task.status === "open").length;
+  return openCount > 0 ? "Could use a few extra hands" : "In good shape";
+}
+
 async function getEventPageData(eventSlug: string) {
   await connection();
 
@@ -167,8 +224,8 @@ export default async function MemberEventDetailPage({
           <div className="p-4">
             <h2 className="text-sm font-semibold text-zinc-900">At a glance</h2>
             <ul className="mt-3 space-y-2 text-sm text-zinc-600">
-              <li>{hubEvent.areas.length} event areas in view</li>
-              <li>{hubEvent.openNeeds.length} open needs to look at</li>
+              <li>{hubEvent.areas.length} areas identified</li>
+              <li>{hubEvent.openNeeds.length} open spots that could use support</li>
               {dbEvent ? (
                 <li>Starts {formatDateTime(dbEvent.startDate)}</li>
               ) : (
@@ -181,8 +238,8 @@ export default async function MemberEventDetailPage({
 
       <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-zinc-900">Event Areas</h2>
-          <span className="text-xs text-zinc-500">Open each area to see the work list</span>
+          <h2 className="text-base font-semibold text-zinc-900">Areas &amp; Ownership</h2>
+          <span className="text-xs text-zinc-500">Open each area to see ownership and open spots</span>
         </div>
 
         {hubEvent.areas.length === 0 ? (
@@ -198,8 +255,9 @@ export default async function MemberEventDetailPage({
                 className="rounded-xl border border-stone-200 bg-stone-50 p-4 transition-all hover:border-emerald-300 hover:bg-white hover:shadow-sm"
               >
                 <h3 className="text-sm font-semibold text-zinc-900">{area.name}</h3>
-                <p className="mt-2 text-sm text-zinc-600">{area.description}</p>
-                <p className="mt-3 text-xs font-medium text-emerald-700">{area.tasks.length} tasks →</p>
+                <p className="mt-2 text-sm text-zinc-600">Lead: {getAreaLead(area, eventSlug)}</p>
+                <p className="mt-1 text-sm text-zinc-600">When this matters: {getAreaTimeLabel(area, hubEvent.dateLabel, eventSlug)}</p>
+                <p className="mt-1 text-sm font-medium text-emerald-700">{getAreaSupportSummary(area)}</p>
               </Link>
             ))}
           </div>
@@ -209,16 +267,16 @@ export default async function MemberEventDetailPage({
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-zinc-900">Open Needs</h2>
+            <h2 className="text-base font-semibold text-zinc-900">Needs a Hand</h2>
             <span className="rounded-full border border-stone-200 bg-stone-100 px-2 py-0.5 text-xs font-medium text-zinc-600">
-              Shared tasks
+              Open spots
             </span>
           </div>
 
           <MockTaskList
             tasks={hubEvent.openNeeds}
             currentUserName={currentUserName}
-            emptyMessage="No open needs right now."
+            emptyMessage="No open spots right now."
           />
         </section>
 

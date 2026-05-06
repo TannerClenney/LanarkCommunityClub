@@ -31,9 +31,9 @@ type EventAreaSeed = {
 
 const OSD_AREA_SEEDS: EventAreaSeed[] = [
   {
-    name: "Entrance",
-    slug: "entrance",
-    description: "Welcome table, wristbands, signs, and first-contact flow for guests.",
+    name: "Tent / Setup",
+    slug: "tent-setup",
+    description: "Tent layout, entrance table, wristbands, signs, and first-contact flow for guests.",
     displayOrder: 0,
     tasks: [
       {
@@ -59,17 +59,38 @@ const OSD_AREA_SEEDS: EventAreaSeed[] = [
     tasks: [
       {
         title: "Confirm beer tent restock plan for Saturday",
-        description: "[time:Saturday, 1:00\u20132:00 PM] Write down the simple restock handoff so volunteers know what to watch.",
+        description: "[time:Saturday, 1:00–2:00 PM] Write down the simple restock handoff so volunteers know what to watch.",
         displayOrder: 0,
         status: TaskStatus.OPEN,
       },
     ],
   },
   {
-    name: "Logistics",
-    slug: "logistics",
-    description: "Vendor coordination, support items, delivery timing, and paperwork follow-through.",
+    name: "Tickets / Money",
+    slug: "tickets-money",
+    description: "Ticket sales, cash handling, and nightly reconciliation.",
     displayOrder: 2,
+    tasks: [],
+  },
+  {
+    name: "Entertainment",
+    slug: "entertainment",
+    description: "Band and performer scheduling, stage coordination, and sound support.",
+    displayOrder: 3,
+    tasks: [],
+  },
+  {
+    name: "Parade & Stage",
+    slug: "parade-stage",
+    description: "Parade lineup, timing windows, and stage handoff flow.",
+    displayOrder: 4,
+    tasks: [],
+  },
+  {
+    name: "Raffle / Licensing",
+    slug: "raffle-licensing",
+    description: "Raffle ticket sales, licensing confirmations, porta-potty coordination, and vendor paperwork.",
+    displayOrder: 5,
     tasks: [
       {
         title: "Portable toilets for the event",
@@ -85,6 +106,13 @@ const OSD_AREA_SEEDS: EventAreaSeed[] = [
         ownerEmail: "officer@lanarkcommunityclub.com",
       },
     ],
+  },
+  {
+    name: "Food / Pork Chop",
+    slug: "food-pork-chop",
+    description: "Pork chop dinner coordination, Friday prep, cook count, and Saturday meal rush.",
+    displayOrder: 6,
+    tasks: [],
   },
 ];
 
@@ -513,11 +541,77 @@ type DbEventRecord = {
   endDate: Date | null;
 };
 
+const OSD_FINAL_AREA_ORDER = [
+  "tent-setup",
+  "beer-service",
+  "tickets-money",
+  "entertainment",
+  "parade-stage",
+  "raffle-licensing",
+  "food-pork-chop",
+] as const;
+
+const OSD_LEGACY_AREA_MAP: Record<string, (typeof OSD_FINAL_AREA_ORDER)[number]> = {
+  entrance: "tent-setup",
+  logistics: "raffle-licensing",
+};
+
+function mergeUniqueTasksByTitle(
+  existingTasks: DbAreaRecord["tasks"],
+  incomingTasks: DbAreaRecord["tasks"],
+): DbAreaRecord["tasks"] {
+  const merged = [...existingTasks, ...incomingTasks];
+  const seen = new Set<string>();
+  const unique: DbAreaRecord["tasks"] = [];
+
+  for (const task of merged) {
+    const key = task.title.trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(task);
+  }
+
+  return unique;
+}
+
+function normalizeOsdAreas(areas: DbAreaRecord[]): DbAreaRecord[] {
+  const mergedBySlug = new Map<string, DbAreaRecord>();
+
+  for (const area of areas) {
+    const canonicalSlug = OSD_LEGACY_AREA_MAP[area.slug] ?? area.slug;
+
+    if (!OSD_FINAL_AREA_ORDER.includes(canonicalSlug as (typeof OSD_FINAL_AREA_ORDER)[number])) {
+      continue;
+    }
+
+    const existing = mergedBySlug.get(canonicalSlug);
+
+    if (!existing) {
+      mergedBySlug.set(canonicalSlug, {
+        ...area,
+        slug: canonicalSlug,
+      });
+      continue;
+    }
+
+    mergedBySlug.set(canonicalSlug, {
+      ...existing,
+      tasks: mergeUniqueTasksByTitle(existing.tasks, area.tasks),
+    });
+  }
+
+  return OSD_FINAL_AREA_ORDER.flatMap((slug) => {
+    const area = mergedBySlug.get(slug);
+    return area ? [area] : [];
+  });
+}
+
 export function buildMemberHubEventFromDatabase(event: DbEventRecord, areas: DbAreaRecord[]): MemberHubEvent {
   const eventSlug = event.slug;
   const knownEvent = memberHubEvents.find((item) => item.slug === eventSlug);
+  const normalizedAreas = eventSlug === OSD_EVENT_SLUG ? normalizeOsdAreas(areas) : areas;
 
-  const mappedAreas: MemberEventArea[] = areas.map((area) => ({
+  const mappedAreas: MemberEventArea[] = normalizedAreas.map((area) => ({
     slug: area.slug,
     name: area.name,
     description: area.description,
@@ -537,7 +631,7 @@ export function buildMemberHubEventFromDatabase(event: DbEventRecord, areas: DbA
     }),
   }));
 
-  const openNeeds: MemberTask[] = areas.flatMap((area) =>
+  const openNeeds: MemberTask[] = normalizedAreas.flatMap((area) =>
     area.tasks
       .filter((task) => normalizeTaskStatus(task.status) === "open")
       .map((task) => {

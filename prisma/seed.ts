@@ -292,9 +292,9 @@ async function main() {
       showInMemberHub: true,
       areas: [
         {
-          name: "Entrance",
-          slug: "entrance",
-          description: "Welcome table, wristbands, signs, and first-contact flow for guests.",
+          name: "Tent / Setup",
+          slug: "tent-setup",
+          description: "Tent layout, entrance table, wristbands, signs, and first-contact flow for guests.",
           displayOrder: 0,
           tasks: [
             {
@@ -327,10 +327,31 @@ async function main() {
           ],
         },
         {
-          name: "Logistics",
-          slug: "logistics",
-          description: "Vendor coordination, support items, delivery timing, and paperwork follow-through.",
+          name: "Tickets / Money",
+          slug: "tickets-money",
+          description: "Ticket sales, cash handling, and nightly reconciliation.",
           displayOrder: 2,
+          tasks: [],
+        },
+        {
+          name: "Entertainment",
+          slug: "entertainment",
+          description: "Band and performer scheduling, stage coordination, and sound support.",
+          displayOrder: 3,
+          tasks: [],
+        },
+        {
+          name: "Parade & Stage",
+          slug: "parade-stage",
+          description: "Parade lineup, timing windows, and stage handoff flow.",
+          displayOrder: 4,
+          tasks: [],
+        },
+        {
+          name: "Raffle / Licensing",
+          slug: "raffle-licensing",
+          description: "Raffle ticket sales, licensing confirmations, porta-potty coordination, and vendor paperwork.",
+          displayOrder: 5,
           tasks: [
             {
               title: "Portable toilets for the event",
@@ -346,6 +367,13 @@ async function main() {
               ownerEmail: "officer@lanarkcommunityclub.com",
             },
           ],
+        },
+        {
+          name: "Food / Pork Chop",
+          slug: "food-pork-chop",
+          description: "Pork chop dinner coordination, Friday prep, cook count, and Saturday meal rush.",
+          displayOrder: 6,
+          tasks: [],
         },
       ],
     },

@@ -55,78 +55,90 @@ export function getThreadPreview(body: string, maxLength = 160) {
 }
 
 export async function ensurePinnedClubTopics() {
-  const existingTopics = await db.thread.findMany({
-    where: { title: { in: CLUB_TOPIC_TITLES } },
-    select: {
-      id: true,
-      title: true,
-      body: true,
-      pinned: true,
-      locked: true,
-      archived: true,
-    },
-  });
+  await db.$transaction(async (tx) => {
+    // Serialize topic initialization across concurrent requests.
+    await tx.$queryRaw`SELECT pg_advisory_xact_lock(42800401)::text AS lock`;
 
-  const existingByTitle = new Map(existingTopics.map((thread) => [thread.title, thread]));
-
-  let fallbackAuthorId: string | null = null;
-  if (existingTopics.length < CLUB_TOPIC_DEFINITIONS.length) {
-    const boardAuthor = await db.user.findFirst({
-      where: { role: { in: BOARD_OR_ADMIN_ROLES } },
-      select: { id: true },
-      orderBy: { createdAt: "asc" },
+    const existingTopics = await tx.thread.findMany({
+      where: { title: { in: CLUB_TOPIC_TITLES } },
+      select: {
+        id: true,
+        title: true,
+        body: true,
+        pinned: true,
+        locked: true,
+        archived: true,
+        createdAt: true,
+      },
+      orderBy: [{ title: "asc" }, { createdAt: "asc" }, { id: "asc" }],
     });
 
-    const anyAuthor =
-      boardAuthor ??
-      (await db.user.findFirst({
+    const canonicalByTitle = new Map<string, (typeof existingTopics)[number]>();
+    for (const thread of existingTopics) {
+      if (!canonicalByTitle.has(thread.title)) {
+        canonicalByTitle.set(thread.title, thread);
+      }
+    }
+
+    let fallbackAuthorId: string | null = null;
+    if (canonicalByTitle.size < CLUB_TOPIC_DEFINITIONS.length) {
+      const boardAuthor = await tx.user.findFirst({
+        where: { role: { in: BOARD_OR_ADMIN_ROLES } },
         select: { id: true },
         orderBy: { createdAt: "asc" },
-      }));
+      });
 
-    fallbackAuthorId = anyAuthor?.id ?? null;
-  }
+      const anyAuthor =
+        boardAuthor ??
+        (await tx.user.findFirst({
+          select: { id: true },
+          orderBy: { createdAt: "asc" },
+        }));
 
-  for (const topic of CLUB_TOPIC_DEFINITIONS) {
-    const existing = existingByTitle.get(topic.title);
+      fallbackAuthorId = anyAuthor?.id ?? null;
+    }
 
-    if (!existing) {
-      if (!fallbackAuthorId) {
+    for (const topic of CLUB_TOPIC_DEFINITIONS) {
+      const existing = canonicalByTitle.get(topic.title);
+
+      if (!existing) {
+        if (!fallbackAuthorId) {
+          continue;
+        }
+
+        await tx.thread.create({
+          data: {
+            title: topic.title,
+            body: topic.body,
+            authorId: fallbackAuthorId,
+            pinned: true,
+            locked: topic.locked,
+            archived: false,
+          },
+        });
         continue;
       }
 
-      await db.thread.create({
-        data: {
-          title: topic.title,
-          body: topic.body,
-          authorId: fallbackAuthorId,
-          pinned: true,
-          locked: topic.locked,
-          archived: false,
-        },
-      });
-      continue;
-    }
+      if (existing.archived) {
+        continue;
+      }
 
-    if (existing.archived) {
-      continue;
-    }
+      const shouldPin = !existing.pinned;
+      const shouldLock = topic.locked && !existing.locked;
+      const shouldFillBody = !existing.body.trim();
 
-    const shouldPin = !existing.pinned;
-    const shouldLock = topic.locked && !existing.locked;
-    const shouldFillBody = !existing.body.trim();
-
-    if (shouldPin || shouldLock || shouldFillBody) {
-      await db.thread.update({
-        where: { id: existing.id },
-        data: {
-          pinned: true,
-          locked: topic.locked ? true : existing.locked,
-          ...(shouldFillBody ? { body: topic.body } : {}),
-        },
-      });
+      if (shouldPin || shouldLock || shouldFillBody) {
+        await tx.thread.update({
+          where: { id: existing.id },
+          data: {
+            pinned: true,
+            locked: topic.locked ? true : existing.locked,
+            ...(shouldFillBody ? { body: topic.body } : {}),
+          },
+        });
+      }
     }
-  }
+  });
 }
 
 export async function getPinnedClubTopics() {
@@ -138,6 +150,7 @@ export async function getPinnedClubTopics() {
       pinned: true,
       title: { in: CLUB_TOPIC_TITLES },
     },
+    orderBy: [{ createdAt: "asc" }, { id: "asc" }],
     include: {
       author: { select: { name: true } },
       _count: { select: { posts: { where: { archived: false } } } },

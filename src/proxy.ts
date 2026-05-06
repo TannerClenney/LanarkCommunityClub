@@ -8,16 +8,31 @@ const ADMIN_ROUTES = ["/admin"];
 
 export async function proxy(req: NextRequest) {
   const { nextUrl } = req;
+  const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
 
-  const token = await getToken({
+  const secureToken = await getToken({
     req,
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+    secret,
     cookieName: "__Secure-authjs.session-token",
   });
+
+  const localToken = secureToken
+    ? null
+    : await getToken({
+        req,
+        secret,
+        cookieName: "authjs.session-token",
+      });
+
+  const token = secureToken ?? localToken;
+  const tokenSource = secureToken ? "__Secure-authjs.session-token" : localToken ? "authjs.session-token" : null;
 
   console.error("[auth] Proxy token check", {
     pathname: nextUrl.pathname,
     hasToken: Boolean(token),
+    tokenSource,
+    hasSecureCookie: req.cookies.has("__Secure-authjs.session-token"),
+    hasLocalCookie: req.cookies.has("authjs.session-token"),
     role: token?.role ?? null,
   });
 
