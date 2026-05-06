@@ -21,11 +21,11 @@ type CoverageBlock = {
   tasks: Array<{
     id: string;
     title: string;
-    timeLabel: string | null;
-    description: string | null;
+    timeLabel?: string | null;
+    description?: string | null;
     status: string;
-    ownerId: string | null;
-    ownerName: string | null;
+    ownerId?: string | null;
+    ownerName?: string | null;
   }>;
 };
 
@@ -38,11 +38,11 @@ function startsWithActionVerb(title: string): boolean {
 function buildCoverageBlocks(tasks: Array<{
   id: string;
   title: string;
-  timeLabel: string | null;
-  description: string | null;
+  timeLabel?: string | null;
+  description?: string | null;
   status: string;
-  ownerId: string | null;
-  ownerName: string | null;
+  ownerId?: string | null;
+  ownerName?: string | null;
 }>): CoverageBlock[] {
   if (tasks.length === 0) return [];
 
@@ -71,7 +71,7 @@ function buildCoverageBlocks(tasks: Array<{
     const descriptions = groupTasks
       .map((t) => t.description)
       .filter((d) => d && d.length > 0);
-    const description = descriptions.length > 0 ? descriptions[0] : null;
+    const description: string | null = descriptions.length > 0 ? descriptions[0] ?? null : null;
 
     blocks.push({
       groupKey,
@@ -400,7 +400,9 @@ export default async function EventAreaDetailPage({
                       )}
                     </div>
                     <form
-                      action={takeTaskOwnership.bind(null, block.tasks[0].id)}
+                      action={async () => {
+                        await takeTaskOwnership(block.tasks[0].id);
+                      }}
                       className="shrink-0"
                     >
                       <button
