@@ -99,6 +99,18 @@ const genericHighlights = [
   "A great chance to connect with neighbors",
 ];
 
+const sharedDetailHighlights = [
+  "Live music and entertainment all weekend",
+  "Beer tent, food, and local vendors",
+  "A great chance to catch up with friends and neighbors",
+];
+
+const fallFestDetailHighlights = [
+  "Pork chop dinner fundraiser supporting Old Settlers Days",
+  "Simple, community-focused food event",
+  "Proceeds help fund summer entertainment and activities",
+];
+
 async function getPublicEvent(slug: string) {
   await connection();
 
@@ -154,6 +166,7 @@ export default async function PublicEventDetailPage({
   const heroImage = getEventHeroImage(event);
   const dateLabel = formatEventDateRange(event);
   const highlights = eventContent[event.slug]?.highlights ?? genericHighlights;
+  const detailHighlights = event.slug === "fall-fest" ? fallFestDetailHighlights : sharedDetailHighlights;
   const lineup = eventLineups[event.slug];
 
   return (
@@ -274,18 +287,12 @@ export default async function PublicEventDetailPage({
           <div className="rounded-xl border border-stone-200 bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold text-zinc-900">Highlights</h2>
             <ul className="mt-4 space-y-3 text-sm text-zinc-700">
-              <li className="flex gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>Live music and entertainment all weekend</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>Beer tent, food, and local vendors</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
-                <span>A great chance to catch up with friends and neighbors</span>
-              </li>
+              {detailHighlights.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-emerald-600" />
+                  <span>{item}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </section>

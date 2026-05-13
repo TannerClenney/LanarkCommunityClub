@@ -57,6 +57,10 @@ export async function takeTaskOwnership(taskId: string) {
   return { success: true };
 }
 
+export async function takeTaskOwnershipAction(taskId: string): Promise<void> {
+  await takeTaskOwnership(taskId);
+}
+
 export async function createAreaTask(
   eventId: string,
   eventAreaId: string,

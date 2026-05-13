@@ -4,7 +4,7 @@ import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { MockTaskList } from "@/components/ui/MockTaskOwnership";
 import { db } from "@/lib/db";
-import { createAreaTask, takeTaskOwnership } from "@/app/actions/member-hub";
+import { createAreaTask, takeTaskOwnershipAction } from "@/app/actions/member-hub";
 import {
   getFallbackMemberEvents,
   getMemberArea,
@@ -400,9 +400,7 @@ export default async function EventAreaDetailPage({
                       )}
                     </div>
                     <form
-                      action={async () => {
-                        await takeTaskOwnership(block.tasks[0].id);
-                      }}
+                      action={takeTaskOwnershipAction.bind(null, block.tasks[0].id)}
                       className="shrink-0"
                     >
                       <button
